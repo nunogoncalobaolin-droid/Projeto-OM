@@ -1,0 +1,344 @@
+/* --- Estilos Gerais --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    background-color: #ffffff;
+    color: #111827;
+    line-height: 1.6;
+}
+
+/* --- Barra de Navegação Superior (Logo Maior e Abas Estéticas) --- */
+.navbar {
+    background-color: #09090b;
+    color: #ffffff;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 2px solid #27272a;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand {
+    font-size: 26px; /* Logótipo bem maior e destacado */
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.navbar-brand span {
+    color: #e2e8f0; /* Prateado brilhante */
+    background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links a {
+    display: inline-block;
+    background-color: #18181b; /* Cinzento estético individual */
+    color: #d4d4d8;
+    border: 1px solid #3f3f46;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    color: #000000;
+    border-color: #ffffff;
+    font-weight: 700;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+}
+
+/* --- Cabeçalho Hero (Título Gigante e Impactante) --- */
+.hero {
+    text-align: center;
+    padding: 70px 20px 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 52px; /* Título muito maior e apelativo */
+    font-weight: 900;
+    line-height: 1.1;
+    color: #000000;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+}
+
+.hero p {
+    font-size: 19px;
+    color: #52525b;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+/* --- Efeito Prateado Brilhante Interativo (Shimmer) --- */
+.carousel-wrapper, .mini-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%);
+    border: 1px solid #94a3b8;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Feixe de luz metálica que passa ao mover o rato */
+.carousel-wrapper::before, .mini-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.8),
+        transparent
+    );
+    transform: skewX(-25deg);
+    transition: left 0.7s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.carousel-wrapper:hover::before, .mini-card:hover::before {
+    left: 150%;
+}
+
+.carousel-wrapper:hover, .mini-card:hover {
+    border-color: #000000;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Carrossel / Roulote --- */
+.carousel-wrapper {
+    max-width: 950px;
+    margin: 20px auto 55px;
+    border-radius: 16px;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.carousel-slide {
+    min-width: 100%;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.slide-badge {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.carousel-slide h2 {
+    font-size: 34px;
+    font-weight: 800;
+    color: #000000;
+    margin-bottom: 15px;
+}
+
+.carousel-slide p {
+    font-size: 17px;
+    color: #1e293b;
+    max-width: 700px;
+    margin-bottom: 30px;
+}
+
+.btn-primary {
+    background-color: #000000;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    transition: background-color 0.2s, transform 0.2s;
+    border: 1px solid #000000;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.btn-primary:hover {
+    background-color: #27272a;
+    transform: translateY(-2px);
+}
+
+/* Controlos do Carrossel */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, transform 0.2s;
+    z-index: 3;
+}
+
+.carousel-btn:hover {
+    background-color: #000000;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.prev-btn { left: 20px; }
+.next-btn { right: 20px; }
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding-bottom: 25px;
+    position: relative;
+    z-index: 3;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.dot.active {
+    background-color: #000000;
+    transform: scale(1.3);
+}
+
+/* --- Secção Rápida de Cartões de Baixo (Prateado Escuro Metálico / Titânio) --- */
+.quick-access {
+    max-width: 950px;
+    margin: 0 auto 70px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    padding: 0 10px;
+}
+
+.mini-card {
+    position: relative;
+    overflow: hidden;
+    /* Degradé metálico escuro estilo titânio/grafite */
+    background: linear-gradient(135deg, #334155 0%, #1e293b 55%, #09090b 100%);
+    border: 1px solid #475569;
+    border-radius: 14px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Feixe de brilho metálico interativo adaptado para fundo escuro */
+.mini-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        transparent
+    );
+    transform: skewX(-25deg);
+    transition: left 0.7s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.mini-card:hover::before {
+    left: 150%;
+}
+
+.mini-card:hover {
+    transform: translateY(-5px);
+    border-color: #cbd5e1;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.28);
+}
+
+.mini-card h3 {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #ffffff; /* Título em branco brilhante */
+    position: relative;
+    z-index: 1;
+}
+
+.mini-card p {
+    font-size: 15px;
+    color: #cbd5e1; /* Texto em prateado claro */
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.mini-card a {
+    display: inline-block;
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    border-bottom: 2px solid #94a3b8;
+    padding-bottom: 2px;
+    font-size: 15px;
+    position: relative;
+    z-index: 3;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.mini-card a:hover {
+    color: #e2e8f0;
+    border-color: #ffffff;
+}
