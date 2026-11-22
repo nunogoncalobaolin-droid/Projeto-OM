@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descobrir Curso — Rumo Socioeconómico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Estilos.css">
+    <style>
+        .quiz-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .quiz-container {
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: var(--sombra-md);
+            min-height: 460px;
+        }
+
+        /* Barra de Progresso */
+        .progress-wrapper { margin-bottom: 28px; }
+        .progress-info {
+            display: flex; justify-content: space-between;
+            font-size: 13px; font-weight: 700; color: var(--cinza);
+            margin-bottom: 10px;
+        }
+        .progress-info #percent-text { color: var(--preto); }
+        .progress-bar-bg { width: 100%; height: 8px; background: var(--fundo); border-radius: 999px; overflow: hidden; }
+        .progress-bar-fill {
+            height: 100%; width: 12.5%;
+            background: linear-gradient(90deg, #3f3f46, #09090b);
+            border-radius: 999px;
+            transition: width .45s ease;
+        }
+
+        /* Pergunta */
+        .question-card { animation: fadeSlideIn .35s ease forwards; }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+
+        .question-title {
+            font-weight: 900; font-size: 23px; letter-spacing: -.4px;
+            color: var(--preto); margin-bottom: 22px; line-height: 1.3;
+        }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; counter-reset: opcao; }
+
+        .option-btn {
+            position: relative;
+            text-align: left;
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            border-radius: 14px;
+            padding: 16px 18px 16px 62px;
+            font-size: 15.5px;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all .2s ease;
+            font-family: inherit;
+            line-height: 1.45;
+            box-shadow: var(--sombra-sm);
+        }
+
+        /* letra A, B, C, D antes de cada opção */
+        .option-btn::before {
+            counter-increment: opcao;
+            content: counter(opcao, upper-alpha);
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            width: 32px; height: 32px; border-radius: 10px;
+            display: grid; place-items: center;
+            background: var(--fundo); color: var(--preto);
+            font-weight: 900; font-size: 14px;
+            transition: all .2s;
+        }
+
+        .option-btn:hover { border-color: var(--preto); transform: translateX(4px); box-shadow: var(--sombra-md); }
+        .option-btn:hover::before { background: var(--preto); color: #fff; }
+        .option-btn.selected { background: var(--preto); color: #fff; border-color: var(--preto); font-weight: 600; }
+        .option-btn.selected::before { background: var(--prata); color: var(--preto); }
+
+        .quiz-footer { margin-top: 22px; }
+        .btn-back {
+            background: transparent; border: 1px solid var(--cinza-claro);
+            color: var(--cinza-escuro); padding: 9px 16px; border-radius: 10px;
+            font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+            transition: all .2s;
+        }
+        .btn-back:hover { border-color: var(--preto); color: var(--preto); }
+
+        /* Painel lateral */
+        .lado { display: grid; gap: 16px; }
+        .lado .cartao h4 { font-size: 15px; font-weight: 800; color: var(--preto); margin-bottom: 10px; }
+        .lado .cartao p, .lado li { font-size: 14px; color: var(--cinza); }
+        .lado ul { padding-left: 18px; display: grid; gap: 6px; }
+        .areas-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .areas-chips span { font-size: 12px; font-weight: 700; background: var(--fundo); padding: 4px 10px; border-radius: 999px; color: var(--cinza-escuro); }
+
+        /* Resultado */
+        .result-box {
+            display: none;
+            padding: 52px 36px;
+            border-radius: 24px;
+            text-align: center;
+            color: #fff;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(148,163,184,.35) 0%, transparent 55%),
+                linear-gradient(135deg, #18181b 0%, #09090b 100%);
+            box-shadow: var(--sombra-lg);
+            animation: entrar .5s ease both;
+        }
+
+        .result-subtitle { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
+
+        .main-course-title {
+            font-size: 46px; font-weight: 900; line-height: 1.1; letter-spacing: -1.4px;
+            margin: 14px auto 18px; max-width: 760px;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #ffffff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: popInCenter .8s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        @keyframes popInCenter {
+            0% { opacity: 0; transform: scale(.65) translateY(15px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .course-description { max-width: 640px; margin: 0 auto 28px; font-size: 16.5px; color: #d4d4d8; }
+
+        .related-courses-box { border-top: 1px solid rgba(255,255,255,.1); padding-top: 22px; max-width: 640px; margin: 0 auto 8px; }
+        .related-label { font-size: 13px; color: #94a3b8; margin-bottom: 12px; display: block; font-weight: 600; }
+        .related-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .related-tag {
+            background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.15);
+            color: #f4f4f5; padding: 7px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 600;
+        }
+
+        .result-actions {
+            display: flex; flex-direction: column; gap: 14px; align-items: center;
+            margin-top: 26px; border-top: 1px solid rgba(255,255,255,.1); padding-top: 26px;
+        }
+        .action-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .btn-app-link {
+            background: var(--prata); color: #000; text-decoration: none;
+            padding: 13px 20px; border-radius: 12px; font-weight: 800; font-size: 14.5px;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .btn-app-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,255,255,.18); }
+        .btn-retry {
+            background: transparent; border: 1px solid rgba(255,255,255,.25); color: #e4e4e7;
+            padding: 11px 20px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 700;
+            font-family: inherit; transition: background .2s;
+        }
+        .btn-retry:hover { background: rgba(255,255,255,.08); }
+
+        @media (max-width: 920px) {
+            .quiz-layout { grid-template-columns: 1fr; }
+            .quiz-container { padding: 24px; }
+            .main-course-title { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de Navegação Superior -->
+    <nav class="navbar">
+        <a href="HTMLProjeto.html" class="navbar-brand">Rumo<span>Socioeconómico</span></a>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-btn" aria-label="Abrir menu">☰</label>
+        <ul class="nav-links">
+            <li><a href="HTMLProjeto.html">Home</a></li>
+            <li><a href="questionario.html" class="active">1. Descobrir Curso</a></li>
+            <li><a href="medias.html">2. Médias & Universidades</a></li>
+            <li><a href="europa.html">3. Estudar na Europa</a></li>
+        </ul>
+    </nav>
+
+    <main class="contentor">
+        <header class="page-hero">
+            <span class="eyebrow">🧭 Aplicação 1 · Teste vocacional</span>
+            <h1>Descobre o teu curso ideal</h1>
+            <p>Responde a 8 perguntas rápidas sobre os teus interesses e o teu perfil. No fim, mostramos-te o curso socioeconómico que mais combina contigo.</p>
+        </header>
+
+        <div class="quiz-layout">
+            <div>
+                <!-- Área do Questionário Interativo -->
+                <div id="quiz-area" class="quiz-container">
+                    <div class="progress-wrapper">
+                        <div class="progress-info">
+                            <span id="step-text">Pergunta 1 de 8</span>
+                            <span id="percent-text">13%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div id="progress-fill" class="progress-bar-fill"></div>
+                        </div>
+                    </div>
+
+                    <div id="question-box" class="question-card">
+                        <!-- A pergunta atual é injetada aqui via JavaScript -->
+                    </div>
+
+                    <div class="quiz-footer">
+                        <button id="btn-prev" class="btn-back" onclick="perguntaAnterior()" style="display: none;">← Pergunta anterior</button>
+                    </div>
+                </div>
+
+                <!-- Caixa de Resultado Final -->
+                <div id="result-box" class="result-box">
+                    <div class="result-subtitle">O curso mais indicado para ti é</div>
+                    <div id="main-course" class="main-course-title"></div>
+                    <p id="course-desc" class="course-description"></p>
+
+                    <div class="related-courses-box">
+                        <span class="related-label">Outros cursos que também te podem interessar:</span>
+                        <div id="related-tags" class="related-tags"></div>
+                    </div>
+
+                    <div class="result-actions">
+                        <span style="font-size: 13px; color: #a1a1aa; font-weight: 600;">Continua para as próximas ferramentas:</span>
+                        <div class="action-row">
+                            <a href="medias.html" class="btn-app-link">📊 2. Simulador de Médias</a>
+                            <a href="europa.html" class="btn-app-link">🌍 3. Estudar na Europa</a>
+                        </div>
+                        <button class="btn-retry" onclick="reiniciarTeste()">↻ Refazer questionário</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel lateral com informação -->
+            <aside class="lado">
+                <div class="cartao">
+                    <h4>⏱️ Como funciona</h4>
+                    <ul>
+                        <li>8 perguntas, cerca de 2 minutos</li>
+                        <li>Escolhe a opção que mais se parece contigo</li>
+                        <li>Podes voltar atrás a qualquer momento</li>
+                    </ul>
+                </div>
+                <div class="cartao">
+                    <h4>🎯 Os 12 resultados possíveis</h4>
+                    <div class="areas-chips">
+                        <span>Gestão</span><span>Economia</span><span>Finanças</span><span>Direito</span>
+                        <span>Gestão de Empresas</span><span>Marketing</span><span>Contabilidade e Finanças</span>
+                        <span>Recursos Humanos</span><span>Relações Internacionais</span><span>Gestão Industrial</span>
+                        <span>MAEG</span><span>Outra Área</span>
+                    </div>
+                </div>
+                <div class="cartao">
+                    <h4>💡 Dica</h4>
+                    <p>Responde com sinceridade, a pensar no que gostas de fazer — não no curso que achas que “devias” escolher.</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="rodape">
+        <div class="contentor">
+            <div class="rodape-grid">
+                <div>
+                    <a href="HTMLProjeto.html" class="navbar-brand">Rumo<span>Socioeconómico</span></a>
+                    <p>Projeto de Oficina de Multimédia — 12.º B, CRSI. Ferramentas para ajudar alunos do secundário a escolher o seu caminho no ensino superior.</p>
+                </div>
+                <div>
+                    <h4>Aplicações</h4>
+                    <ul>
+                        <li><a href="questionario.html">Descobrir Curso</a></li>
+                        <li><a href="medias.html">Médias & Universidades</a></li>
+                        <li><a href="europa.html">Estudar na Europa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Links úteis</h4>
+                    <ul>
+                        <li><a href="https://www.dges.gov.pt/" target="_blank" rel="noopener">DGES — Acesso ao Ensino Superior</a></li>
+                        <li><a href="https://erasmus-plus.ec.europa.eu/" target="_blank" rel="noopener">Erasmus+</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="rodape-base">
+                <span>© 2026 Rumo Socioeconómico · Nuno Lin</span>
+                <span>Dados de referência — confirma sempre nos sites oficiais.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const perguntas = [
+            {
+                texto: "1. Quando acompanhas notícias sobre a atualidade, o que te desperta mais interesse?",
+                opcoes: [
+                    { texto: "A forma como grandes marcas lideram o mercado e lançam novos produtos.", valor: "gestao" },
+                    { texto: "O impacto das taxas de juro, da inflação e do crescimento económico dos países.", valor: "economia" },
+                    { texto: "As leis, os direitos dos cidadãos, os tratados europeus e a justiça.", valor: "direito" },
+                    { texto: "As relações diplomáticas entre países, conflitos globais e organizações internacionais.", valor: "ri" }
+                ]
+            },
+            {
+                texto: "2. Como descreves a tua relação com a Matemática e os números?",
+                opcoes: [
+                    { texto: "Adoro matemática avançada, programação e modelos estatísticos complexos.", valor: "maeg" },
+                    { texto: "Gosto de analisar investimentos, mercados financeiros, ações e risco.", valor: "financas" },
+                    { texto: "Gosto de rigor, organização de contas, balanços e fiscalidade.", valor: "contabilidade" },
+                    { texto: "Prefiro lidar com pessoas, comunicação, argumentação ou criatividade do que com cálculos intensivos.", valor: "humanas" }
+                ]
+            },
+            {
+                texto: "3. Num projeto ou trabalho de grupo, qual é o papel que assumes naturalmente?",
+                opcoes: [
+                    { texto: "Coordeno a equipa, organizo prazos e garanto que tudo funciona de forma eficiente.", valor: "empresas" },
+                    { texto: "Crio a apresentação, penso na imagem, na comunicação e em como cativar o público.", valor: "marketing" },
+                    { texto: "Preocupo-me com o bem-estar do grupo, a motivação de cada membro e a resolução de conflitos.", valor: "rh" },
+                    { texto: "Otimizo os processos, procuro melhorar a logística e tornar o trabalho mais produtivo.", valor: "industrial" }
+                ]
+            },
+            {
+                texto: "4. Qual destas áreas te parece mais aliciante para o teu futuro profissional?",
+                opcoes: [
+                    { texto: "Banca de investimento, consultoria financeira ou gestão de patrimónios.", valor: "financas" },
+                    { texto: "Publicidade, gestão de marcas (branding), estudos de mercado e redes sociais.", valor: "marketing" },
+                    { texto: "Advocacia, magistratura, assessoria jurídica ou direito empresarial.", valor: "direito" },
+                    { texto: "Gestão de operações, cadeias de abastecimento, tecnologia e indústria.", valor: "industrial" }
+                ]
+            },
+            {
+                texto: "5. Se tivesses de criar um projeto próprio, qual seria a tua maior prioridade?",
+                opcoes: [
+                    { texto: "Definir a estratégia global do negócio e identificar oportunidades de crescimento.", valor: "gestao" },
+                    { texto: "Garantir o controlo rigoroso dos custos, impostos e sustentabilidade financeira.", valor: "contabilidade" },
+                    { texto: "Recrutar os melhores talentos e construir uma excelente cultura de trabalho.", valor: "rh" },
+                    { texto: "Explorar uma área criativa, tecnológica ou fora do mundo empresarial tradicional.", valor: "outra" }
+                ]
+            },
+            {
+                texto: "6. Qual destas disciplinas ou temas te desperta maior curiosidade?",
+                opcoes: [
+                    { texto: "Macroeconomia, Políticas Públicas e História Económica.", valor: "economia" },
+                    { texto: "Econometria, Investigação Operacional e Ciência de Dados.", valor: "maeg" },
+                    { texto: "Ciência Política, Geopolítica, Línguas Estrangeiras e Diplomacia.", valor: "ri" },
+                    { texto: "Empreendedorismo, Liderança e Estratégia Empresarial.", valor: "empresas" }
+                ]
+            },
+            {
+                texto: "7. Onde te imaginas a trabalhar daqui a 10 anos?",
+                opcoes: [
+                    { texto: "Numa embaixada, na União Europeia, na ONU ou numa ONG internacional.", valor: "ri" },
+                    { texto: "Numa grande empresa tecnológica ou industrial a gerir processos e inovação.", valor: "industrial" },
+                    { texto: "Numa grande sociedade de auditoria (Big Four) ou departamento financeiro.", valor: "contabilidade" },
+                    { texto: "Num ambiente totalmente diferente (saúde, artes, desporto, ensino ou programação pura).", valor: "outra" }
+                ]
+            },
+            {
+                texto: "8. Perante um problema complexo, qual é a tua abordagem habitual?",
+                opcoes: [
+                    { texto: "Uso dados, estatística e lógica matemática para prever o melhor cenário.", valor: "maeg" },
+                    { texto: "Analiso as regras, os regulamentos e construo uma argumentação sólida.", valor: "direito" },
+                    { texto: "Penso fora da caixa e procuro uma solução criativa centrada nas pessoas.", valor: "marketing" },
+                    { texto: "Tomo decisões práticas e rápidas para resolver o problema e avançar.", valor: "gestao" }
+                ]
+            }
+        ];
+
+        const dadosCursos = {
+            gestao: {
+                nome: "Gestão",
+                descricao: "Tens uma visão estratégica, prática e orientada para a tomada de decisões. O curso de Gestão prepara-te de forma transversal em finanças, marketing, operações e liderança para gerires organizações ou criares o teu próprio negócio.",
+                relacionados: ["Gestão de Empresas", "Economia", "Marketing", "Finanças"]
+            },
+            economia: {
+                nome: "Economia",
+                descricao: "Tens um perfil analítico e gostas de compreender o panorama global. Economia ensina-te a analisar mercados, políticas públicas, inflação e o funcionamento da sociedade com uma sólida base quantitativa.",
+                relacionados: ["Finanças", "Matemática Aplicada à Economia e à Gestão (MAEG)", "Gestão", "Relações Internacionais"]
+            },
+            financas: {
+                nome: "Finanças",
+                descricao: "Tens apetência para os mercados financeiros, análise de investimentos e gestão de capital. Este curso foca-se na banca, avaliação de empresas, gestão de risco e mercados de capitais.",
+                relacionados: ["Contabilidade e Finanças", "Economia", "Gestão", "Matemática Aplicada à Economia e à Gestão (MAEG)"]
+            },
+            direito: {
+                nome: "Direito",
+                descricao: "Tens espírito crítico, capacidade de argumentação e interesse pelas leis que regem a sociedade e as empresas. Direito abre portas para a advocacia, magistratura, diplomacia e consultoria jurídica.",
+                relacionados: ["Relações Internacionais", "Gestão de Recursos Humanos", "Economia"]
+            },
+            empresas: {
+                nome: "Gestão de Empresas",
+                descricao: "Focas-te na organização interna, liderança de equipas e eficiência operacional. É um curso extremamente prático voltado para a administração e crescimento sustentável de pequenas, médias e grandes empresas.",
+                relacionados: ["Gestão", "Contabilidade e Finanças", "Gestão de Recursos Humanos", "Marketing"]
+            },
+            marketing: {
+                nome: "Marketing",
+                descricao: "Combinas criatividade com análise de mercado e comportamento do consumidor. Vais aprender a construir marcas, gerir comunicação digital, lançar produtos e criar estratégias comerciais de impacto.",
+                relacionados: ["Gestão", "Gestão de Empresas", "Gestão de Recursos Humanos"]
+            },
+            contabilidade: {
+                nome: "Contabilidade e Finanças",
+                descricao: "És rigoroso, organizado e gostas de trabalhar com informação financeira estruturada. Prepara-te para auditoria, fiscalidade, controlo de gestão e direção financeira com altíssima empregabilidade.",
+                relacionados: ["Finanças", "Gestão de Empresas", "Gestão", "Economia"]
+            },
+            rh: {
+                nome: "Gestão de Recursos Humanos",
+                descricao: "Valorizas o fator humano nas organizações. Este curso foca-se no recrutamento, desenvolvimento de talento, liderança, motivação de equipas e psicologia organizacional.",
+                relacionados: ["Gestão de Empresas", "Marketing", "Direito", "Gestão"]
+            },
+            ri: {
+                nome: "Relações Internacionais",
+                descricao: "Tens interesse pelo mundo global, diplomacia, política internacional e cooperação entre estados. Combina economia, direito internacional, história e ciência política.",
+                relacionados: ["Direito", "Economia", "Marketing"]
+            },
+            industrial: {
+                nome: "Gestão e Engenharia Industrial",
+                descricao: "Fazes a ponte entre a engenharia, a tecnologia e a gestão. Vais aprender a otimizar processos produtivos, cadeias de logística, qualidade e inovação tecnológica nas empresas.",
+                relacionados: ["Gestão", "Matemática Aplicada à Economia e à Gestão (MAEG)", "Gestão de Empresas"]
+            },
+            maeg: {
+                nome: "Matemática Aplicada à Economia e à Gestão (MAEG)",
+                descricao: "Tens uma forte aptidão matemática e gostas de resolver problemas económicos através de modelos quantitativos, estatística avançada, ciência de dados e programação.",
+                relacionados: ["Economia", "Finanças", "Gestão e Engenharia Industrial"]
+            },
+            outra: {
+                nome: "Outra Área",
+                descricao: "As tuas respostas mostram interesses que vão além do núcleo tradicional das Ciências Socioeconómicas! Podes explorar cursos nas áreas das Tecnologias de Informação, Comunicação, Psicologia, Desporto ou Artes.",
+                relacionados: ["Marketing", "Gestão de Recursos Humanos", "Gestão e Engenharia Industrial"]
+            }
+        };
+
+        let indiceAtual = 0;
+        let respostasEscolhidas = new Array(perguntas.length).fill(null);
+
+        function renderizarPergunta() {
+            const pergunta = perguntas[indiceAtual];
+            const questionBox = document.getElementById("question-box");
+            const stepText = document.getElementById("step-text");
+            const percentText = document.getElementById("percent-text");
+            const progressFill = document.getElementById("progress-fill");
+            const btnPrev = document.getElementById("btn-prev");
+
+            const progresso = Math.round(((indiceAtual + 1) / perguntas.length) * 100);
+            stepText.textContent = `Pergunta ${indiceAtual + 1} de ${perguntas.length}`;
+            percentText.textContent = `${progresso}%`;
+            progressFill.style.width = `${progresso}%`;
+
+            btnPrev.style.display = indiceAtual > 0 ? "inline-block" : "none";
+
+            questionBox.style.animation = "none";
+            questionBox.offsetHeight;
+            questionBox.style.animation = null;
+
+            let htmlOpcoes = "";
+            pergunta.opcoes.forEach((op, i) => {
+                const selecionada = respostasEscolhidas[indiceAtual] === op.valor ? "selected" : "";
+                htmlOpcoes += `
+                    <button type="button" class="option-btn ${selecionada}" onclick="selecionarOpcao('${op.valor}')">
+                        ${op.texto}
+                    </button>
+                `;
+            });
+
+            questionBox.innerHTML = `
+                <div class="question-title">${pergunta.texto}</div>
+                <div class="options-list">${htmlOpcoes}</div>
+            `;
+        }
+
+        function selecionarOpcao(valor) {
+            respostasEscolhidas[indiceAtual] = valor;
+
+            if (indiceAtual < perguntas.length - 1) {
+                indiceAtual++;
+                renderizarPergunta();
+            } else {
+                mostrarResultado();
+            }
+        }
+
+        function perguntaAnterior() {
+            if (indiceAtual > 0) {
+                indiceAtual--;
+                renderizarPergunta();
+            }
+        }
+
+        function mostrarResultado() {
+            const pontuacao = {
+                gestao: 0, economia: 0, financas: 0, direito: 0,
+                empresas: 0, marketing: 0, contabilidade: 0, rh: 0,
+                ri: 0, industrial: 0, maeg: 0, outra: 0
+            };
+
+            respostasEscolhidas.forEach(val => {
+                if (val === "humanas") {
+                    pontuacao.direito += 1;
+                    pontuacao.rh += 1;
+                    pontuacao.marketing += 1;
+                } else if (pontuacao[val] !== undefined) {
+                    pontuacao[val] += 2;
+                }
+            });
+
+            let cursoVencedor = "gestao";
+            let maxPontos = -1;
+
+            for (const [curso, pontos] of Object.entries(pontuacao)) {
+                if (pontos > maxPontos) {
+                    maxPontos = pontos;
+                    cursoVencedor = curso;
+                }
+            }
+
+            const info = dadosCursos[cursoVencedor];
+            document.getElementById("quiz-area").style.display = "none";
+
+            const resultBox = document.getElementById("result-box");
+            const mainCourseEl = document.getElementById("main-course");
+            const descEl = document.getElementById("course-desc");
+            const tagsEl = document.getElementById("related-tags");
+
+            mainCourseEl.textContent = info.nome;
+            descEl.textContent = info.descricao;
+
+            tagsEl.innerHTML = "";
+            info.relacionados.forEach(rel => {
+                const span = document.createElement("span");
+                span.className = "related-tag";
+                span.textContent = rel;
+                tagsEl.appendChild(span);
+            });
+
+            resultBox.style.display = "block";
+            resultBox.scrollIntoView({ behavior: "smooth" });
+        }
+
+        function reiniciarTeste() {
+            indiceAtual = 0;
+            respostasEscolhidas = new Array(perguntas.length).fill(null);
+            document.getElementById("result-box").style.display = "none";
+            document.getElementById("quiz-area").style.display = "block";
+            renderizarPergunta();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        window.onload = renderizarPergunta;
+    </script>
+
+</body>
+</html>

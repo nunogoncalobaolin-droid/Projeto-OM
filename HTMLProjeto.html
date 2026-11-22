@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumo Socioeconómico — Guia para o Ensino Superior</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Estilos.css">
+    <style>
+        /* =========================================================
+           HERO DA PÁGINA INICIAL
+           ========================================================= */
+        .home-hero {
+            position: relative;
+            background:
+                radial-gradient(circle at 80% 10%, rgba(148,163,184,.30) 0%, transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(100,116,139,.30) 0%, transparent 45%),
+                linear-gradient(160deg, #18181b 0%, #09090b 70%);
+            color: #fff;
+            padding: 72px 0 96px;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        /* Fotografia de fundo do banner (2 camadas para trocar com transição suave) */
+        .hero-foto {
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.04);
+            transition: opacity 1.2s ease;
+            animation: zoomLento 24s ease-in-out infinite alternate;
+        }
+        .hero-foto.escondida { opacity: 0; }
+        @keyframes zoomLento { from { transform: scale(1.04); } to { transform: scale(1.12); } }
+
+        /* Camada escura por cima da foto, para o texto se ler bem */
+        .home-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(90deg, rgba(9,9,11,.97) 0%, rgba(9,9,11,.88) 42%, rgba(9,9,11,.55) 100%),
+                linear-gradient(to top, rgba(9,9,11,.9) 0%, transparent 40%);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            gap: 56px;
+            align-items: center;
+        }
+
+        .home-hero h1 {
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.04;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 35%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .home-hero .lead { font-size: 18px; color: #a1a1aa; max-width: 540px; margin-bottom: 30px; }
+        .hero-botoes { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .hero-numeros {
+            display: flex;
+            gap: 32px;
+            margin-top: 40px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255,255,255,.1);
+            flex-wrap: wrap;
+        }
+
+        .hero-numeros b { display: block; font-size: 30px; font-weight: 900; line-height: 1.1; color: #fff; }
+        .hero-numeros span { font-size: 13px; color: #a1a1aa; font-weight: 600; }
+
+        /* =========================================================
+           CARROSSEL DAS APPS (dentro do hero)
+           ========================================================= */
+        .carousel-wrapper {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.1);
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .carousel-track { display: flex; transition: transform .6s cubic-bezier(.25,1,.5,1); }
+
+        .carousel-slide {
+            min-width: 100%;
+            padding: 40px 40px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: 360px;
+        }
+
+        .slide-icone {
+            width: 56px; height: 56px;
+            border-radius: 16px;
+            display: grid; place-items: center;
+            font-size: 26px;
+            background: var(--prata);
+            box-shadow: 0 8px 20px rgba(255,255,255,.12);
+        }
+
+        .slide-badge {
+            font-size: 12px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: #94a3b8;
+        }
+
+        .carousel-slide h2 { font-size: 28px; font-weight: 900; line-height: 1.15; letter-spacing: -.6px; }
+        .carousel-slide p { color: #a1a1aa; font-size: 15.5px; flex: 1; }
+        .carousel-slide .btn-primary { align-self: flex-start; }
+
+        .carousel-controlos {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px 28px;
+        }
+
+        .carousel-dots { display: flex; gap: 8px; }
+        .dot {
+            width: 8px; height: 8px; border-radius: 999px;
+            background: rgba(255,255,255,.25); cursor: pointer;
+            transition: width .3s, background .3s;
+        }
+        .dot.active { width: 28px; background: #fff; }
+
+        .carousel-setas { display: flex; gap: 8px; }
+        .carousel-btn {
+            width: 40px; height: 40px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255,255,255,.05); color: #fff;
+            cursor: pointer; font-size: 16px;
+            transition: background .2s;
+        }
+        .carousel-btn:hover { background: rgba(255,255,255,.15); }
+
+        /* barra de progresso do carrossel */
+        .carousel-progresso { height: 3px; background: rgba(255,255,255,.08); }
+        .carousel-progresso i { display: block; height: 100%; width: 0; background: var(--prata); }
+        .carousel-progresso i.correr { animation: progresso 3s linear forwards; }
+        @keyframes progresso { to { width: 100%; } }
+
+        /* =========================================================
+           FERRAMENTAS (3 cartões)
+           ========================================================= */
+        .ferramentas {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: -56px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ferramenta {
+            position: relative;
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            border-radius: 20px;
+            padding: 28px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--sombra-md);
+            overflow: hidden;
+            transition: transform .25s, box-shadow .25s, border-color .25s;
+        }
+
+        .ferramenta:hover { transform: translateY(-6px); box-shadow: var(--sombra-lg); border-color: var(--preto); }
+
+        .ferramenta .num {
+            position: absolute;
+            top: 14px; right: 20px;
+            font-size: 64px; font-weight: 900; line-height: 1;
+            color: var(--fundo);
+        }
+
+        .ferramenta .icone {
+            width: 48px; height: 48px; border-radius: 14px;
+            display: grid; place-items: center; font-size: 22px;
+            background: var(--preto); margin-bottom: 18px;
+            position: relative;
+        }
+
+        .ferramenta h3 { font-size: 19px; font-weight: 800; color: var(--preto); margin-bottom: 6px; position: relative; }
+        .ferramenta p { font-size: 14.5px; color: var(--cinza); margin-bottom: 16px; position: relative; }
+        .ferramenta .link { font-weight: 800; font-size: 14px; color: var(--preto); display: inline-flex; gap: 6px; align-items: center; }
+        .ferramenta:hover .link span { transform: translateX(4px); }
+        .ferramenta .link span { transition: transform .2s; }
+
+        /* =========================================================
+           COMO FUNCIONA
+           ========================================================= */
+        .passos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            counter-reset: passo;
+        }
+
+        .passo {
+            position: relative;
+            padding: 28px;
+            border-radius: 20px;
+            background: var(--prata-escura);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .passo::before {
+            counter-increment: passo;
+            content: "0" counter(passo);
+            display: block;
+            font-size: 14px; font-weight: 800; letter-spacing: 2px;
+            color: #94a3b8; margin-bottom: 14px;
+        }
+
+        .passo h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+        .passo p { color: #cbd5e1; font-size: 14.5px; }
+
+        /* =========================================================
+           TOP 10 ECONOMIA
+           ========================================================= */
+        .top10 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 28px;
+        }
+
+        .top-linha {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 4px;
+            border-bottom: 1px solid var(--fundo);
+        }
+
+        .top-pos {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: grid; place-items: center;
+            font-weight: 900; font-size: 17px;
+            background: var(--fundo); color: var(--preto);
+            flex-shrink: 0;
+        }
+
+        .top-linha:nth-child(-n+3) .top-pos { background: var(--preto); color: #fff; }
+        .top-linha img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(0,0,0,.08); flex-shrink: 0; }
+        .top-info { flex: 1; min-width: 0; }
+        .top-info b { display: block; font-size: 15.5px; color: var(--preto); line-height: 1.3; }
+        .top-info small { color: var(--cinza); font-size: 13px; font-weight: 600; }
+
+        .top-barra { height: 4px; border-radius: 4px; background: var(--fundo); margin-top: 8px; overflow: hidden; }
+        .top-barra i { display: block; height: 100%; background: var(--preto); border-radius: 4px; width: 0; transition: width 1.2s ease; }
+
+        .top-mundo { text-align: right; flex-shrink: 0; }
+        .top-mundo b { display: block; font-size: 18px; font-weight: 900; color: var(--preto); }
+        .top-mundo small { font-size: 11px; color: var(--cinza); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* =========================================================
+           DESTINOS POPULARES
+           ========================================================= */
+        .destinos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .destino {
+            position: relative;
+            height: 300px;
+            border-radius: 22px;
+            overflow: hidden;
+            text-decoration: none;
+            color: #fff;
+            background: var(--prata-escura);
+            box-shadow: var(--sombra-md);
+            transition: transform .3s, box-shadow .3s;
+        }
+
+        .destino:hover { transform: translateY(-6px); box-shadow: var(--sombra-lg); }
+        .destino img.foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+        .destino:hover img.foto { transform: scale(1.07); }
+        .destino::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(9,9,11,.95) 0%, rgba(9,9,11,.35) 55%, rgba(9,9,11,.05) 100%); }
+
+        .destino-topo {
+            position: absolute; top: 16px; left: 16px; right: 16px; z-index: 2;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .destino-topo img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,.8); }
+        .destino-etiqueta { font-size: 11.5px; font-weight: 800; background: rgba(255,255,255,.92); color: var(--preto); padding: 5px 10px; border-radius: 999px; }
+
+        .destino-info { position: absolute; left: 20px; right: 20px; bottom: 20px; z-index: 2; }
+        .destino-info h3 { font-size: 24px; font-weight: 900; letter-spacing: -.4px; }
+        .destino-info .dado { font-size: 13.5px; color: #e4e4e7; font-weight: 600; margin: 4px 0 10px; }
+        .destino-info .ir { font-size: 13.5px; font-weight: 800; display: inline-flex; gap: 6px; color: #fff; }
+
+        /* =========================================================
+           SABIAS QUE (faixa de factos)
+           ========================================================= */
+        .factos {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .facto { background: var(--branco); border: 1px solid var(--cinza-claro); border-radius: 18px; padding: 22px; box-shadow: var(--sombra-sm); }
+        .facto b { display: block; font-size: 30px; font-weight: 900; color: var(--preto); letter-spacing: -1px; line-height: 1.1; margin-bottom: 6px; }
+        .facto p { font-size: 14px; color: var(--cinza); }
+
+        /* =========================================================
+           CHAMADA FINAL
+           ========================================================= */
+        .cta {
+            margin-top: 72px;
+            border-radius: 28px;
+            padding: 56px;
+            text-align: center;
+            color: #fff;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(148,163,184,.35) 0%, transparent 55%),
+                linear-gradient(135deg, #18181b 0%, #09090b 100%);
+            box-shadow: var(--sombra-lg);
+        }
+
+        .cta h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px; }
+        .cta p { color: #a1a1aa; margin-bottom: 26px; }
+
+        /* =========================================================
+           RESPONSIVO
+           ========================================================= */
+        @media (max-width: 980px) {
+            .hero-grid, .top10 { grid-template-columns: 1fr; }
+            .ferramentas, .passos, .destinos { grid-template-columns: 1fr; }
+            .factos { grid-template-columns: 1fr 1fr; }
+            .home-hero h1 { font-size: 40px; }
+            .cta { padding: 36px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de Navegação Superior -->
+    <nav class="navbar">
+        <a href="HTMLProjeto.html" class="navbar-brand">Rumo<span>Socioeconómico</span></a>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-btn" aria-label="Abrir menu">☰</label>
+        <ul class="nav-links">
+            <li><a href="HTMLProjeto.html" class="active">Home</a></li>
+            <li><a href="questionario.html">1. Descobrir Curso</a></li>
+            <li><a href="medias.html">2. Médias & Universidades</a></li>
+            <li><a href="europa.html">3. Estudar na Europa</a></li>
+        </ul>
+    </nav>
+
+    <!-- ================= HERO ================= -->
+    <header class="home-hero">
+        <div class="hero-foto" id="foto-a"></div>
+        <div class="hero-foto escondida" id="foto-b"></div>
+        <div class="contentor hero-grid">
+            <div>
+                <span class="eyebrow">🎓 Guia para o Ensino Superior</span>
+                <h1>O teu futuro em Ciências Socioeconómicas começa aqui</h1>
+                <p class="lead">Ferramentas interativas para alunos do Ensino Secundário escolherem o curso ideal, verificarem médias de acesso e explorarem universidades em Portugal e na Europa.</p>
+                <div class="hero-botoes">
+                    <a href="questionario.html" class="btn btn-prata">Fazer o teste vocacional →</a>
+                    <a href="europa.html" class="btn btn-contorno">Explorar a Europa</a>
+                </div>
+                <div class="hero-numeros">
+                    <div><b>12</b><span>perfis de curso</span></div>
+                    <div><b id="n-unis">300+</b><span>universidades europeias</span></div>
+                    <div><b id="n-paises">44</b><span>países</span></div>
+                    <div><b id="n-cursos">600+</b><span>licenciaturas</span></div>
+                </div>
+            </div>
+
+            <!-- Carrossel (gira de 3 em 3 segundos) -->
+            <section class="carousel-wrapper" id="carousel" aria-label="Aplicações">
+                <div class="carousel-track" id="track">
+                    <div class="carousel-slide">
+                        <div class="slide-icone">🧭</div>
+                        <span class="slide-badge">Aplicação 1</span>
+                        <h2>Teste de Vocação: qual o teu curso ideal?</h2>
+                        <p>Gestão, Economia, Finanças, Direito, Marketing, MAEG ou Relações Internacionais? Responde a 8 perguntas e descobre qual das 12 áreas combina melhor com o teu perfil.</p>
+                        <a href="questionario.html" class="btn-primary">Fazer o questionário →</a>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="slide-icone">📊</div>
+                        <span class="slide-badge">Aplicação 2</span>
+                        <h2>Simulador de Médias e Universidades</h2>
+                        <p>Introduz a tua média esperada, escolhe o curso e descobre em que universidades portuguesas consegues entrar, com base nos últimos 5 anos.</p>
+                        <a href="medias.html" class="btn-primary">Simular candidatura →</a>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="slide-icone">🌍</div>
+                        <span class="slide-badge">Aplicação 3</span>
+                        <h2>Estudar na Europa</h2>
+                        <p>Escolhe um país, vê as universidades organizadas por dificuldade de entrada e encontra as licenciaturas abertas a alunos internacionais.</p>
+                        <a href="europa.html" class="btn-primary">Explorar universidades →</a>
+                    </div>
+                </div>
+                <div class="carousel-controlos">
+                    <div class="carousel-dots">
+                        <span class="dot active" onclick="irParaSlide(0)"></span>
+                        <span class="dot" onclick="irParaSlide(1)"></span>
+                        <span class="dot" onclick="irParaSlide(2)"></span>
+                    </div>
+                    <div class="carousel-setas">
+                        <button class="carousel-btn" onclick="mudarSlide(-1)" aria-label="Anterior">&#10094;</button>
+                        <button class="carousel-btn" onclick="mudarSlide(1)" aria-label="Seguinte">&#10095;</button>
+                    </div>
+                </div>
+                <div class="carousel-progresso"><i id="progresso"></i></div>
+            </section>
+        </div>
+    </header>
+
+    <main class="contentor">
+
+        <!-- ================= AS 3 FERRAMENTAS ================= -->
+        <section class="ferramentas">
+            <a href="questionario.html" class="ferramenta aparecer">
+                <span class="num">01</span>
+                <div class="icone">🧭</div>
+                <h3>Descobrir Curso</h3>
+                <p>12 perfis socioeconómicos. Descobre o curso que mais se adequa a ti.</p>
+                <span class="link">Abrir app <span>→</span></span>
+            </a>
+            <a href="medias.html" class="ferramenta aparecer">
+                <span class="num">02</span>
+                <div class="icone">📊</div>
+                <h3>Médias & Universidades</h3>
+                <p>Vê onde entras em Portugal com base nas médias dos últimos 5 anos.</p>
+                <span class="link">Abrir app <span>→</span></span>
+            </a>
+            <a href="europa.html" class="ferramenta aparecer">
+                <span class="num">03</span>
+                <div class="icone">🌍</div>
+                <h3>Estudar na Europa</h3>
+                <p>Universidades de 44 países por dificuldade de entrada, com links para os cursos.</p>
+                <span class="link">Abrir app <span>→</span></span>
+            </a>
+        </section>
+
+        <!-- ================= COMO FUNCIONA ================= -->
+        <section class="secao">
+            <div class="secao-cab aparecer">
+                <span class="eyebrow claro">Como funciona</span>
+                <h2>Do “não sei o que quero” à candidatura, em 3 passos</h2>
+                <p>Usa as três ferramentas pela ordem ou vai diretamente à que precisas.</p>
+            </div>
+            <div class="passos">
+                <div class="passo aparecer">
+                    <h3>Descobre o teu curso</h3>
+                    <p>Responde ao teste vocacional e recebe o curso mais indicado para o teu perfil, mais sugestões de cursos relacionados.</p>
+                </div>
+                <div class="passo aparecer">
+                    <h3>Verifica a tua média</h3>
+                    <p>Compara a tua média esperada com as médias de entrada das principais universidades portuguesas.</p>
+                </div>
+                <div class="passo aparecer">
+                    <h3>Abre portas na Europa</h3>
+                    <p>Explora universidades europeias, compara a dificuldade de entrada e encontra os cursos em inglês.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TOP 10 ECONOMIA ================= -->
+        <section class="secao">
+            <div class="secao-cab aparecer">
+                <span class="eyebrow claro">🏆 Ranking</span>
+                <h2>Top 10 da Europa em Economia</h2>
+                <p>As melhores universidades europeias em Economia e Econometria, com a posição mundial de cada uma.</p>
+            </div>
+            <div class="cartao aparecer">
+                <div class="top10" id="top10"></div>
+                <p class="fonte">Fonte: QS World University Rankings by Subject 2026 — Economics & Econometrics (posição mundial; “=” indica empate).</p>
+            </div>
+        </section>
+
+        <!-- ================= DESTINOS POPULARES ================= -->
+        <section class="secao">
+            <div class="secao-cab aparecer">
+                <span class="eyebrow claro">✈️ Destinos</span>
+                <h2>Destinos mais populares entre estudantes portugueses</h2>
+                <p>Os países onde mais portugueses fazem a licenciatura ou o mestrado, e os favoritos para Erasmus. Clica num destino para ver as universidades.</p>
+            </div>
+            <div class="destinos" id="destinos"></div>
+            <p class="fonte aparecer">Fontes: Diário de Notícias (alunos portugueses de licenciatura e mestrado no estrangeiro), Comissão Europeia / dados Erasmus+ e ECO (Uniplaces).</p>
+        </section>
+
+        <!-- ================= SABIAS QUE ================= -->
+        <section class="secao">
+            <div class="secao-cab aparecer">
+                <span class="eyebrow claro">💡 Sabias que…</span>
+                <h2>Números que ajudam a decidir</h2>
+            </div>
+            <div class="factos">
+                <div class="facto aparecer"><b>697 €</b><p>Propina anual de uma licenciatura numa universidade pública portuguesa (2025/26).</p></div>
+                <div class="facto aparecer"><b>0 €</b><p>Propinas na Stockholm School of Economics para alunos da UE, num bacharelato 100% em inglês.</p></div>
+                <div class="facto aparecer"><b>N.º 1</b><p>A Bocconi (Milão) é a melhor universidade da UE em Economia, Finanças e Marketing.</p></div>
+                <div class="facto aparecer"><b>33</b><p>Países onde podes estudar com o programa Erasmus+ durante a licenciatura.</p></div>
+            </div>
+        </section>
+
+        <!-- ================= CHAMADA FINAL ================= -->
+        <section class="cta aparecer">
+            <h2>Ainda não sabes que curso escolher?</h2>
+            <p>Começa pelo teste vocacional — demora menos de 2 minutos.</p>
+            <a href="questionario.html" class="btn btn-prata">Começar agora →</a>
+        </section>
+    </main>
+
+    <!-- ================= RODAPÉ ================= -->
+    <footer class="rodape">
+        <div class="contentor">
+            <div class="rodape-grid">
+                <div>
+                    <a href="HTMLProjeto.html" class="navbar-brand">Rumo<span>Socioeconómico</span></a>
+                    <p>Projeto de Oficina de Multimédia — 12.º B, CRSI. Ferramentas para ajudar alunos do secundário a escolher o seu caminho no ensino superior.</p>
+                </div>
+                <div>
+                    <h4>Aplicações</h4>
+                    <ul>
+                        <li><a href="questionario.html">Descobrir Curso</a></li>
+                        <li><a href="medias.html">Médias & Universidades</a></li>
+                        <li><a href="europa.html">Estudar na Europa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Links úteis</h4>
+                    <ul>
+                        <li><a href="https://www.dges.gov.pt/" target="_blank" rel="noopener">DGES — Acesso ao Ensino Superior</a></li>
+                        <li><a href="https://erasmus-plus.ec.europa.eu/" target="_blank" rel="noopener">Erasmus+</a></li>
+                        <li><a href="https://www.topuniversities.com/" target="_blank" rel="noopener">QS Top Universities</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="rodape-base">
+                <span>© 2026 Rumo Socioeconómico · Nuno Lin</span>
+                <span>Dados de referência — confirma sempre nos sites oficiais.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Base de dados europeia (para os números do topo) -->
+    <script src="dados-europa.js"></script>
+    <script src="fotos.js"></script>
+    <script>
+        /* =========================================================
+           CARROSSEL (gira de 3 em 3 segundos, pausa com o rato)
+           ========================================================= */
+        let slideAtual = 0;
+        const totalSlides = 3;
+        const track = document.getElementById("track");
+        const dots = document.querySelectorAll(".dot");
+        const carousel = document.getElementById("carousel");
+        const barra = document.getElementById("progresso");
+        let intervalo = null;
+
+        function reiniciarBarra() {
+            barra.classList.remove("correr");
+            void barra.offsetWidth;            // força o navegador a reiniciar a animação
+            barra.classList.add("correr");
+        }
+
+        function atualizarCarrossel() {
+            track.style.transform = `translateX(-${slideAtual * 100}%)`;
+            dots.forEach((dot, i) => dot.classList.toggle("active", i === slideAtual));
+            reiniciarBarra();
+        }
+
+        function mudarSlide(direcao) {
+            slideAtual = (slideAtual + direcao + totalSlides) % totalSlides;
+            atualizarCarrossel();
+        }
+
+        function irParaSlide(indice) {
+            slideAtual = indice;
+            atualizarCarrossel();
+        }
+
+        function iniciarRotacao() {
+            clearInterval(intervalo);
+            intervalo = setInterval(() => mudarSlide(1), 3000);
+            reiniciarBarra();
+        }
+
+        carousel.addEventListener("mouseenter", () => { clearInterval(intervalo); barra.classList.remove("correr"); });
+        carousel.addEventListener("mouseleave", iniciarRotacao);
+        iniciarRotacao();
+
+        /* =========================================================
+           TOP 10 EUROPA EM ECONOMIA (QS by Subject 2026)
+           ========================================================= */
+        const top10Economia = [
+            { nome: "London School of Economics (LSE)", pais: "Reino Unido", iso: "gb", mundo: "6" },
+            { nome: "University of Oxford", pais: "Reino Unido", iso: "gb", mundo: "8" },
+            { nome: "University of Cambridge", pais: "Reino Unido", iso: "gb", mundo: "10" },
+            { nome: "University College London (UCL)", pais: "Reino Unido", iso: "gb", mundo: "17" },
+            { nome: "Università Bocconi", pais: "Itália", iso: "it", mundo: "18" },
+            { nome: "ETH Zurich", pais: "Suíça", iso: "ch", mundo: "23" },
+            { nome: "University of Warwick", pais: "Reino Unido", iso: "gb", mundo: "25" },
+            { nome: "Imperial College London", pais: "Reino Unido", iso: "gb", mundo: "29" },
+            { nome: "Universitat Pompeu Fabra (UPF)", pais: "Espanha", iso: "es", mundo: "=31" },
+            { nome: "University of Zurich (UZH)", pais: "Suíça", iso: "ch", mundo: "=38" }
+        ];
+
+        function mostrarTop10() {
+            const caixa = document.getElementById("top10");
+            top10Economia.forEach((u, i) => {
+                const posMundo = parseInt(u.mundo.replace("=", ""), 10);
+                const forca = Math.round(100 - (posMundo - 6) * 1.6);   // barra visual: quanto melhor, mais cheia
+                const linha = document.createElement("div");
+                linha.className = "top-linha";
+                linha.innerHTML = `
+                    <div class="top-pos">${i + 1}</div>
+                    <img src="https://flagcdn.com/w80/${u.iso}.png" alt="${u.pais}">
+                    <div class="top-info">
+                        <b>${u.nome}</b>
+                        <small>${u.pais}</small>
+                        <div class="top-barra"><i data-largura="${forca}%"></i></div>
+                    </div>
+                    <div class="top-mundo"><b>#${posMundo}</b><small>${u.mundo.startsWith("=") ? "Mundo (empate)" : "Mundo"}</small></div>`;
+                caixa.appendChild(linha);
+            });
+        }
+
+        /* =========================================================
+           DESTINOS POPULARES
+           ========================================================= */
+        const destinosPopulares = [
+            { pais: "Reino Unido", iso: "gb", cidade: "London", etiqueta: "N.º 1 em licenciaturas",
+              dado: "2 521 estudantes portugueses de licenciatura e mestrado" },
+            { pais: "Espanha", iso: "es", cidade: "Barcelona", etiqueta: "Favorito no Erasmus",
+              dado: "1 776 estudantes · Barcelona é a cidade preferida" },
+            { pais: "França", iso: "fr", cidade: "Paris", etiqueta: "Top 3 em licenciaturas",
+              dado: "1 659 estudantes portugueses de licenciatura e mestrado" },
+            { pais: "Itália", iso: "it", cidade: "Milan", etiqueta: "Top Erasmus",
+              dado: "Um dos 3 destinos Erasmus mais escolhidos" },
+            { pais: "Polónia", iso: "pl", cidade: "Kraków", etiqueta: "Em crescimento",
+              dado: "Destino Erasmus em forte crescimento e custo de vida baixo" },
+            { pais: "Países Baixos", iso: "nl", cidade: "Canals of Amsterdam", etiqueta: "Cursos em inglês",
+              dado: "Muitas licenciaturas 100% em inglês" }
+        ];
+
+        function mostrarDestinos() {
+            const caixa = document.getElementById("destinos");
+            destinosPopulares.forEach(d => {
+                const cartao = document.createElement("a");
+                cartao.className = "destino aparecer";
+                cartao.href = "europa.html?pais=" + encodeURIComponent(d.pais);
+                cartao.innerHTML = `
+                    <img class="foto" data-cidade="${d.cidade}" alt="${d.pais}" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">
+                    <div class="destino-topo">
+                        <img src="https://flagcdn.com/w80/${d.iso}.png" alt="Bandeira">
+                        <span class="destino-etiqueta">${d.etiqueta}</span>
+                    </div>
+                    <div class="destino-info">
+                        <h3>${d.pais}</h3>
+                        <div class="dado">${d.dado}</div>
+                        <span class="ir">Ver universidades →</span>
+                    </div>`;
+                caixa.appendChild(cartao);
+            });
+            carregarFotosCidades();
+        }
+
+        // Fotografias das cidades (ver fotos.js)
+        function carregarFotosCidades() {
+            destinosPopulares.forEach(d => {
+                obterFoto(d.cidade, 900).then(url => {
+                    const img = document.querySelector(`img[data-cidade="${d.cidade}"]`);
+                    if (url && img) img.src = url;
+                });
+            });
+        }
+
+        /* =========================================================
+           NÚMEROS DO TOPO (calculados a partir da base de dados)
+           ========================================================= */
+        function animarNumero(el, alvo, sufixo = "") {
+            const inicio = performance.now();
+            (function frame(t) {
+                const p = Math.min((t - inicio) / 1000, 1);
+                el.textContent = Math.round(alvo * (1 - Math.pow(1 - p, 3))) + sufixo;
+                if (p < 1) requestAnimationFrame(frame);
+            })(inicio);
+        }
+
+        function mostrarNumeros() {
+            if (typeof baseDadosUniversidades === "undefined") return;
+            const todas = Object.values(baseDadosUniversidades).flat();
+            animarNumero(document.getElementById("n-unis"), todas.length);
+            animarNumero(document.getElementById("n-paises"), Object.keys(baseDadosUniversidades).length);
+            animarNumero(document.getElementById("n-cursos"), todas.reduce((s, u) => s + u.cursos.length, 0));
+        }
+
+        /* =========================================================
+           ANIMAÇÕES AO FAZER SCROLL
+           ========================================================= */
+        function ativarAnimacoes() {
+            const observador = new IntersectionObserver(entradas => {
+                entradas.forEach(e => {
+                    if (!e.isIntersecting) return;
+                    e.target.classList.add("visivel");
+                    e.target.querySelectorAll(".top-barra i").forEach(b => b.style.width = b.dataset.largura);
+                    observador.unobserve(e.target);
+                });
+            }, { threshold: 0.15 });
+            document.querySelectorAll(".aparecer").forEach(el => observador.observe(el));
+        }
+
+        /* =========================================================
+           FOTOGRAFIA DO BANNER
+           Mostra logo a foto da LSE (guardada no dados-europa.js) e depois
+           troca, com transição, por uma foto de universidade da Wikipédia.
+           ========================================================= */
+        const FOTOS_BANNER = ["Old Library, Trinity College Dublin", "King's College Chapel, Cambridge", "Radcliffe Camera"];
+
+        async function carregarBanner() {
+            const a = document.getElementById("foto-a");
+            const b = document.getElementById("foto-b");
+            if (typeof FOTO_LSE !== "undefined") a.style.backgroundImage = `url("${FOTO_LSE}")`;
+
+            // Escolhe uma das fotos ao acaso e só a mostra depois de carregada
+            const titulo = FOTOS_BANNER[Math.floor(Math.random() * FOTOS_BANNER.length)];
+            const url = await obterFoto(titulo, 1920);
+            if (!url) return;
+            const img = new Image();
+            img.onload = () => {
+                b.style.backgroundImage = `url("${url}")`;
+                b.classList.remove("escondida");
+            };
+            img.src = url;
+        }
+
+        carregarBanner();
+        mostrarTop10();
+        mostrarDestinos();
+        mostrarNumeros();
+        ativarAnimacoes();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudar na Europa — Rumo Socioeconómico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Estilos.css">
+    <style>
+        /* =========================================================
+           VARIÁVEIS DE DESIGN (cores, sombras, cantos)
+           ========================================================= */
+        :root {
+            --preto: #09090b;
+            --grafite: #18181b;
+            --cinza-escuro: #3f3f46;
+            --cinza: #71717a;
+            --cinza-claro: #e4e4e7;
+            --fundo: #f4f4f5;
+            --branco: #ffffff;
+            --prata: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            --sombra-sm: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.08);
+            --sombra-md: 0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+            --sombra-lg: 0 20px 40px -12px rgba(0,0,0,.25);
+            --raio: 16px;
+            /* cores dos 3 grupos de dificuldade */
+            --dificil: #dc2626; --moderado: #d97706; --facil: #16a34a;
+        }
+
+        body { background: var(--fundo); }
+
+        .app {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* =========================================================
+           CABEÇALHO (HERO)
+           ========================================================= */
+        .hero-eu {
+            position: relative;
+            margin: 28px 0 24px;
+            padding: 48px 48px 40px;
+            border-radius: 24px;
+            color: var(--branco);
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 85% 20%, rgba(148,163,184,.35) 0%, transparent 45%),
+                radial-gradient(circle at 10% 110%, rgba(100,116,139,.35) 0%, transparent 40%),
+                linear-gradient(135deg, #18181b 0%, #09090b 100%);
+            box-shadow: var(--sombra-lg);
+        }
+
+
+        /* cabeçalho compacto nos passos 2 e 3 */
+        .hero-eu { transition: padding .35s ease; }
+        .hero-eu.compacto { padding: 22px 32px; }
+        .hero-eu.compacto h1 { font-size: 26px; margin-bottom: 0; }
+        .hero-eu.compacto h1 br { display: none; }
+        .hero-eu.compacto p, .hero-eu.compacto .hero-stats, .hero-eu.compacto .hero-eyebrow { display: none; }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #cbd5e1;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.12);
+            padding: 6px 12px;
+            border-radius: 999px;
+            margin-bottom: 18px;
+        }
+
+        .hero-eu h1 {
+            font-size: 44px;
+            line-height: 1.08;
+            font-weight: 900;
+            letter-spacing: -1.2px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-eu p {
+            max-width: 640px;
+            color: #a1a1aa;
+            font-size: 16.5px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat {
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 14px;
+            padding: 12px 18px;
+            backdrop-filter: blur(6px);
+        }
+
+        .stat b { display: block; font-size: 22px; font-weight: 900; color: #fff; line-height: 1.2; }
+        .stat span { font-size: 12px; color: #a1a1aa; font-weight: 600; }
+
+        /* =========================================================
+           INDICADOR DE PASSOS (STEPPER)
+           ========================================================= */
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            border-radius: 999px;
+            padding: 6px 16px 6px 6px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cinza);
+            font-family: inherit;
+            cursor: default;
+            transition: all .2s;
+        }
+
+        .step .num {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: grid; place-items: center;
+            background: var(--fundo);
+            font-size: 13px;
+        }
+
+        .step.feito { cursor: pointer; color: var(--preto); }
+        .step.feito:hover { border-color: var(--preto); }
+        .step.feito .num { background: var(--cinza-claro); }
+        .step.ativo { background: var(--preto); color: var(--branco); border-color: var(--preto); box-shadow: var(--sombra-md); }
+        .step.ativo .num { background: var(--branco); color: var(--preto); }
+        .step-sep { width: 24px; height: 2px; background: var(--cinza-claro); border-radius: 2px; }
+
+        /* =========================================================
+           BARRA DE FERRAMENTAS (pesquisa, filtros, ordenação)
+           ========================================================= */
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search {
+            position: relative;
+            flex: 1 1 280px;
+        }
+
+        .search svg {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--cinza);
+        }
+
+        .search input, .select {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border-radius: 12px;
+            border: 1px solid var(--cinza-claro);
+            background: var(--branco);
+            font-size: 15px;
+            font-family: inherit;
+            color: var(--preto);
+            box-shadow: var(--sombra-sm);
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .select { padding-left: 14px; width: auto; cursor: pointer; font-weight: 600; }
+
+        .search input:focus, .select:focus {
+            outline: none;
+            border-color: var(--preto);
+            box-shadow: 0 0 0 4px rgba(0,0,0,.06);
+        }
+
+        .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+
+        .chip {
+            border: 1px solid var(--cinza-claro);
+            background: var(--branco);
+            color: var(--cinza-escuro);
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .chip:hover { border-color: var(--preto); color: var(--preto); }
+        .chip.ativo { background: var(--preto); border-color: var(--preto); color: var(--branco); }
+
+        .toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--cinza-escuro);
+            cursor: pointer;
+            user-select: none;
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            padding: 10px 14px;
+            border-radius: 12px;
+            box-shadow: var(--sombra-sm);
+        }
+
+        .toggle input { display: none; }
+        .toggle .track {
+            width: 36px; height: 20px; border-radius: 999px;
+            background: var(--cinza-claro); position: relative; transition: background .2s;
+        }
+        .toggle .track::after {
+            content: ""; position: absolute; top: 2px; left: 2px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: #fff; box-shadow: var(--sombra-sm); transition: transform .2s;
+        }
+        .toggle input:checked + .track { background: var(--preto); }
+        .toggle input:checked + .track::after { transform: translateX(16px); }
+
+        /* =========================================================
+           PASSO 1 — PAÍSES
+           ========================================================= */
+        .grid-paises {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 14px;
+        }
+
+        .pais {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            border-radius: var(--raio);
+            padding: 14px;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+            box-shadow: var(--sombra-sm);
+            transition: transform .2s, box-shadow .2s, border-color .2s;
+            animation: entrar .4s ease both;
+        }
+
+        .pais:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--sombra-md);
+            border-color: var(--preto);
+        }
+
+        .pais img {
+            width: 52px; height: 52px;
+            border-radius: 12px;
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 1px rgba(0,0,0,.08);
+        }
+
+        .pais h3 { font-size: 16px; font-weight: 800; color: var(--preto); line-height: 1.2; }
+        .pais small { display: block; font-size: 12.5px; color: var(--cinza); font-weight: 600; margin-top: 3px; }
+        .pais .top { color: var(--preto); }
+        .pais.ref { opacity: .6; border-style: dashed; }
+
+        /* =========================================================
+           PASSO 2 — UNIVERSIDADES DO PAÍS
+           ========================================================= */
+        .banner-pais {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--sombra-sm);
+            flex-wrap: wrap;
+        }
+
+        .banner-pais img { width: 72px; height: 72px; border-radius: 16px; object-fit: cover; box-shadow: 0 0 0 1px rgba(0,0,0,.08); }
+        .banner-pais h2 { font-size: 28px; font-weight: 900; letter-spacing: -.5px; color: var(--preto); }
+        .banner-pais p { color: var(--cinza); font-size: 14px; font-weight: 600; }
+        .banner-mini-stats { margin-left: auto; display: flex; gap: 10px; }
+        .mini-stat { background: var(--fundo); border-radius: 12px; padding: 8px 14px; text-align: center; }
+        .mini-stat b { display: block; font-size: 18px; font-weight: 900; color: var(--preto); }
+        .mini-stat span { font-size: 11.5px; color: var(--cinza); font-weight: 700; }
+
+        .grid-unis {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        .uni {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: var(--sombra-sm);
+            transition: transform .25s, box-shadow .25s;
+            animation: entrar .45s ease both;
+            text-align: left;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .uni:hover { transform: translateY(-5px); box-shadow: var(--sombra-lg); }
+        .uni:hover .uni-foto img { transform: scale(1.06); }
+
+        .uni-foto {
+            position: relative;
+            height: 160px;
+            overflow: hidden;
+            background: #27272a;
+        }
+
+        .uni-foto img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform .5s ease;
+        }
+
+        .uni-foto::after {
+            content: "";
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,.55) 0%, transparent 55%);
+        }
+
+
+        .uni-corpo { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .uni-corpo h3 { font-size: 16.5px; font-weight: 800; color: var(--preto); line-height: 1.25; }
+        .local { font-size: 13px; color: var(--cinza); font-weight: 600; display: flex; align-items: center; gap: 5px; }
+
+        .nivel {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 800;
+            padding: 4px 10px; border-radius: 999px;
+            background: var(--fundo); color: var(--cinza-escuro);
+            width: fit-content;
+        }
+
+        .nivel::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+        .nivel.dificil  { color: var(--dificil);  background: #fef2f2; }
+        .nivel.moderado { color: var(--moderado); background: #fffbeb; }
+        .nivel.facil    { color: var(--facil);    background: #f0fdf4; }
+        .det-hero-info .nivel { font-size: 13px; padding: 6px 12px; }
+
+        /* secções por grupo de dificuldade */
+        .grupo { margin-bottom: 36px; }
+        .grupo-cab {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 16px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--cinza-claro);
+        }
+        .grupo-cab .bola {
+            width: 14px; height: 14px; border-radius: 50%;
+            box-shadow: 0 0 0 5px rgba(0,0,0,.04);
+        }
+        .grupo-cab h3 { font-size: 22px; font-weight: 900; color: var(--preto); letter-spacing: -.3px; }
+        .grupo-cab p { font-size: 13.5px; color: var(--cinza); font-weight: 600; }
+        .grupo-cab .conta {
+            margin-left: auto; font-size: 13px; font-weight: 800;
+            background: var(--branco); border: 1px solid var(--cinza-claro);
+            padding: 5px 12px; border-radius: 999px; color: var(--cinza-escuro);
+        }
+        .grupo.dificil .bola  { background: var(--dificil); }
+        .grupo.moderado .bola { background: var(--moderado); }
+        .grupo.facil .bola    { background: var(--facil); }
+        .contagens { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+        .contagens i { font-style: normal; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+        .pais > div { min-width: 0; }
+        .contagens .dificil { color: var(--dificil); background: #fef2f2; }
+        .contagens .moderado { color: var(--moderado); background: #fffbeb; }
+        .contagens .facil { color: var(--facil); background: #f0fdf4; }
+
+        .uni-rodape {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--fundo);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--cinza);
+        }
+
+        .uni-rodape .ver { color: var(--preto); display: flex; align-items: center; gap: 4px; }
+        .uni:hover .ver svg { transform: translateX(3px); }
+        .ver svg { transition: transform .2s; }
+
+        /* =========================================================
+           PASSO 3 — DETALHE DA UNIVERSIDADE + CURSOS
+           ========================================================= */
+        .btn-voltar {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--branco); border: 1px solid var(--cinza-claro);
+            padding: 9px 16px; border-radius: 10px;
+            font-size: 14px; font-weight: 700; font-family: inherit;
+            cursor: pointer; color: var(--preto); margin-bottom: 18px;
+            box-shadow: var(--sombra-sm); transition: border-color .2s;
+        }
+        .btn-voltar:hover { border-color: var(--preto); }
+
+        .det-hero {
+            position: relative;
+            height: 300px;
+            border-radius: 24px;
+            overflow: hidden;
+            background: #27272a;
+            box-shadow: var(--sombra-lg);
+            margin-bottom: 24px;
+        }
+
+        .det-hero img { width: 100%; height: 100%; object-fit: cover; }
+        .det-hero::after {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(9,9,11,.95) 0%, rgba(9,9,11,.4) 50%, rgba(9,9,11,.1) 100%);
+        }
+
+        .det-hero-info {
+            position: absolute;
+            left: 32px; right: 32px; bottom: 28px;
+            z-index: 2;
+            color: #fff;
+        }
+
+        .det-hero-info h2 { font-size: 36px; font-weight: 900; letter-spacing: -.8px; line-height: 1.1; margin: 10px 0 8px; }
+        .det-hero-info p { color: #d4d4d8; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+        .det-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .painel {
+            background: var(--branco);
+            border: 1px solid var(--cinza-claro);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--sombra-sm);
+        }
+
+        .painel h3 { font-size: 20px; font-weight: 900; color: var(--preto); margin-bottom: 4px; }
+        .painel .sub { color: var(--cinza); font-size: 14px; margin-bottom: 18px; }
+
+        .curso {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid var(--cinza-claro);
+            border-radius: 14px;
+            margin-bottom: 10px;
+            transition: border-color .2s, background .2s, transform .2s;
+            animation: entrar .35s ease both;
+        }
+
+        .curso:hover { border-color: var(--preto); background: #fafafa; transform: translateX(3px); }
+
+        .curso-icone {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: grid; place-items: center;
+            background: var(--preto); color: #fff;
+            font-weight: 900; font-size: 15px; flex-shrink: 0;
+        }
+
+        .curso-info { flex: 1; min-width: 0; }
+        .curso-info h4 { font-size: 15.5px; font-weight: 800; color: var(--preto); line-height: 1.3; }
+        .linguas { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .lingua { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--fundo); color: var(--cinza-escuro); }
+        .lingua.en { background: #eff6ff; color: #1d4ed8; }
+
+        .btn-curso {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--preto); color: #fff;
+            text-decoration: none;
+            padding: 10px 16px; border-radius: 10px;
+            font-size: 13.5px; font-weight: 700;
+            white-space: nowrap;
+            transition: background .2s, transform .2s;
+        }
+        .btn-curso:hover { background: var(--cinza-escuro); transform: translateY(-1px); }
+
+        .info-linha { padding: 14px 0; border-bottom: 1px solid var(--fundo); }
+        .info-linha:last-of-type { border-bottom: none; }
+        .info-linha span { display: block; font-size: 12px; font-weight: 700; color: var(--cinza); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
+        .info-linha b { font-size: 15px; color: var(--preto); }
+        .info-linha p { font-size: 14px; color: var(--cinza-escuro); }
+
+        .btn-site {
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+            margin-top: 16px; padding: 13px;
+            background: var(--prata); color: #000;
+            border: 1px solid #cbd5e1; border-radius: 12px;
+            text-decoration: none; font-weight: 800; font-size: 14.5px;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .btn-site:hover { transform: translateY(-2px); box-shadow: var(--sombra-md); }
+        .btn-site.escuro { background: var(--preto); color: #fff; border-color: var(--preto); margin-top: 10px; }
+
+        .aviso {
+            margin-top: 16px; padding: 12px 14px;
+            background: var(--fundo); border-radius: 12px;
+            font-size: 12.5px; color: var(--cinza-escuro); line-height: 1.5;
+        }
+
+        /* =========================================================
+           ESTADOS, ANIMAÇÕES E RESPONSIVO
+           ========================================================= */
+        .vazio {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--cinza);
+            background: var(--branco);
+            border: 1px dashed var(--cinza-claro);
+            border-radius: var(--raio);
+            font-weight: 600;
+        }
+
+        .escondido { display: none !important; }
+        .vista { animation: entrar .35s ease both; }
+
+        @keyframes entrar {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px; left: 50%;
+            transform: translate(-50%, 120px);
+            background: var(--preto); color: #fff;
+            padding: 14px 20px; border-radius: 12px;
+            font-weight: 600; font-size: 14px;
+            box-shadow: var(--sombra-lg);
+            transition: transform .3s ease, visibility .3s;
+            visibility: hidden;
+            z-index: 2000;
+            max-width: 90vw;
+        }
+        .toast.mostrar { transform: translate(-50%, 0); visibility: visible; }
+
+        @media (max-width: 900px) {
+            .det-grid { grid-template-columns: 1fr; }
+            .hero-eu { padding: 32px 24px; }
+            .hero-eu h1 { font-size: 32px; }
+            .banner-mini-stats { margin-left: 0; }
+            .det-hero-info h2 { font-size: 26px; }
+            .curso { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de Navegação Superior -->
+    <nav class="navbar">
+        <a href="HTMLProjeto.html" class="navbar-brand">Rumo<span>Socioeconómico</span></a>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-btn" aria-label="Abrir menu">☰</label>
+        <ul class="nav-links">
+            <li><a href="HTMLProjeto.html">Home</a></li>
+            <li><a href="questionario.html">1. Descobrir Curso</a></li>
+            <li><a href="medias.html">2. Médias & Universidades</a></li>
+            <li><a href="europa.html" class="active">3. Estudar na Europa</a></li>
+        </ul>
+    </nav>
+
+    <main class="app">
+
+        <!-- Cabeçalho -->
+        <header class="hero-eu" id="hero">
+            <span class="hero-eyebrow">🌍 Aplicação 3 · Estudar na Europa</span>
+            <h1>Encontra a tua universidade <br>na Europa</h1>
+            <p>Escolhe um país, vê as universidades organizadas pela dificuldade de entrada e descobre as licenciaturas abertas a alunos internacionais, com o link direto para cada curso.</p>
+            <div class="hero-stats">
+                <div class="stat"><b id="st-paises">0</b><span>países</span></div>
+                <div class="stat"><b id="st-unis">0</b><span>universidades</span></div>
+                <div class="stat"><b id="st-cursos">0</b><span>licenciaturas</span></div>
+                <div class="stat"><b>3</b><span>níveis de dificuldade</span></div>
+            </div>
+        </header>
+
+        <!-- Passos -->
+        <nav class="stepper" aria-label="Passos">
+            <button class="step ativo" id="step-1" onclick="irPara(1)"><span class="num">1</span>País</button>
+            <span class="step-sep"></span>
+            <button class="step" id="step-2" onclick="irPara(2)"><span class="num">2</span>Universidade</button>
+            <span class="step-sep"></span>
+            <button class="step" id="step-3"><span class="num">3</span>Cursos</button>
+        </nav>
+
+        <!-- ================= PASSO 1: PAÍSES ================= -->
+        <section id="vista-paises" class="vista">
+            <div class="toolbar">
+                <label class="search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                    <input type="text" id="pesquisa-pais" placeholder="Pesquisar país..." oninput="mostrarPaises()">
+                </label>
+            </div>
+            <div class="chips" id="chips-regioes"></div>
+            <div class="grid-paises" id="grid-paises"></div>
+        </section>
+
+        <!-- ================= PASSO 2: UNIVERSIDADES ================= -->
+        <section id="vista-unis" class="vista escondido">
+            <div class="banner-pais">
+                <img id="bp-bandeira" src="" alt="">
+                <div>
+                    <h2 id="bp-nome"></h2>
+                    <p>Universidades organizadas pela dificuldade de entrada</p>
+                </div>
+                <div class="banner-mini-stats">
+                    <div class="mini-stat"><b id="bp-dificil" style="color:var(--dificil)">0</b><span>difíceis</span></div>
+                    <div class="mini-stat"><b id="bp-moderado" style="color:var(--moderado)">0</b><span>moderadas</span></div>
+                    <div class="mini-stat"><b id="bp-facil" style="color:var(--facil)">0</b><span>fáceis</span></div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <label class="search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                    <input type="text" id="pesquisa-uni" placeholder="Pesquisar universidade ou cidade..." oninput="mostrarUnis()">
+                </label>
+                <select class="select" id="filtro-area" onchange="mostrarUnis()">
+                    <option value="">Todas as áreas</option>
+                </select>
+                <select class="select" id="filtro-grupo" onchange="mostrarUnis()">
+                    <option value="">Todas as dificuldades</option>
+                    <option value="dificil">Só difíceis</option>
+                    <option value="moderado">Só moderadas</option>
+                    <option value="facil">Só fáceis</option>
+                </select>
+                <label class="toggle">
+                    <input type="checkbox" id="so-ingles" onchange="mostrarUnis()">
+                    <span class="track"></span> Só com cursos em inglês
+                </label>
+            </div>
+
+            <div id="grupos-unis"></div>
+        </section>
+
+        <!-- ================= PASSO 3: UNIVERSIDADE + CURSOS ================= -->
+        <section id="vista-uni" class="vista escondido">
+            <button class="btn-voltar" onclick="irPara(2)">← Voltar às universidades</button>
+
+            <div class="det-hero">
+                <img id="det-foto" src="" alt="">
+                <div class="det-hero-info">
+                    <span class="nivel" id="det-grupo"></span>
+                    <h2 id="det-nome"></h2>
+                    <p id="det-local"></p>
+                </div>
+            </div>
+
+            <div class="det-grid">
+                <div class="painel">
+                    <h3>Licenciaturas para alunos internacionais</h3>
+                    <p class="sub" id="det-sub"></p>
+                    <div id="lista-cursos"></div>
+                </div>
+
+                <aside class="painel">
+                    <div class="info-linha"><span>Dificuldade de entrada</span><span class="nivel" id="det-nivel"></span></div>
+                    <div class="info-linha"><span>Requisitos (referência)</span><b id="det-req"></b></div>
+                    <div class="info-linha"><span>Sobre</span><p id="det-desc"></p></div>
+                    <a id="det-site" class="btn-site" target="_blank" rel="noopener noreferrer">Site oficial ↗</a>
+                    <a id="det-admissoes" class="btn-site escuro" target="_blank" rel="noopener noreferrer">Candidaturas internacionais ↗</a>
+                    <div class="aviso">ℹ️ Os cursos, médias e requisitos são valores de referência. Confirma sempre os prazos e condições de candidatura no site oficial da universidade.</div>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="rodape">
+        <div class="contentor">
+            <div class="rodape-grid">
+                <div>
+                    <a href="HTMLProjeto.html" class="navbar-brand">Rumo<span>Socioeconómico</span></a>
+                    <p>Projeto de Oficina de Multimédia — 12.º B, CRSI. Ferramentas para ajudar alunos do secundário a escolher o seu caminho no ensino superior.</p>
+                </div>
+                <div>
+                    <h4>Aplicações</h4>
+                    <ul>
+                        <li><a href="questionario.html">Descobrir Curso</a></li>
+                        <li><a href="medias.html">Médias & Universidades</a></li>
+                        <li><a href="europa.html">Estudar na Europa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Links úteis</h4>
+                    <ul>
+                        <li><a href="https://www.dges.gov.pt/" target="_blank" rel="noopener">DGES — Acesso ao Ensino Superior</a></li>
+                        <li><a href="https://erasmus-plus.ec.europa.eu/" target="_blank" rel="noopener">Erasmus+</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="rodape-base">
+                <span>© 2026 Rumo Socioeconómico · Nuno Lin</span>
+                <span>Dados de referência — confirma sempre nos sites oficiais.</span>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Base de dados (universidades, dificuldade e cursos) -->
+    <script src="dados-europa.js"></script>
+    <script src="fotos.js"></script>
+    <script>
+        /* =========================================================
+           DADOS DOS PAÍSES E REGIÕES
+           ========================================================= */
+        const paisesEuropa = [
+            { nome: "Portugal", iso: "pt", ref: true, regiao: "Sul" },
+            { nome: "Reino Unido", iso: "gb", regiao: "Ocidental" }, { nome: "Irlanda", iso: "ie", regiao: "Ocidental" },
+            { nome: "França", iso: "fr", regiao: "Ocidental" }, { nome: "Países Baixos", iso: "nl", regiao: "Ocidental" },
+            { nome: "Bélgica", iso: "be", regiao: "Ocidental" }, { nome: "Luxemburgo", iso: "lu", regiao: "Ocidental" },
+            { nome: "Alemanha", iso: "de", regiao: "Ocidental" }, { nome: "Suíça", iso: "ch", regiao: "Ocidental" },
+            { nome: "Áustria", iso: "at", regiao: "Ocidental" }, { nome: "Liechtenstein", iso: "li", regiao: "Ocidental" },
+            { nome: "Espanha", iso: "es", regiao: "Sul" }, { nome: "Itália", iso: "it", regiao: "Sul" },
+            { nome: "Grécia", iso: "gr", regiao: "Sul" }, { nome: "Chipre", iso: "cy", regiao: "Sul" }, { nome: "Malta", iso: "mt", regiao: "Sul" },
+            { nome: "Dinamarca", iso: "dk", regiao: "Nórdicos" }, { nome: "Suécia", iso: "se", regiao: "Nórdicos" },
+            { nome: "Noruega", iso: "no", regiao: "Nórdicos" }, { nome: "Finlândia", iso: "fi", regiao: "Nórdicos" },
+            { nome: "Islândia", iso: "is", regiao: "Nórdicos" },
+            { nome: "Polónia", iso: "pl", regiao: "Central e Bálticos" }, { nome: "Chéquia", iso: "cz", regiao: "Central e Bálticos" },
+            { nome: "Eslováquia", iso: "sk", regiao: "Central e Bálticos" }, { nome: "Hungria", iso: "hu", regiao: "Central e Bálticos" },
+            { nome: "Eslovénia", iso: "si", regiao: "Central e Bálticos" }, { nome: "Estónia", iso: "ee", regiao: "Central e Bálticos" },
+            { nome: "Letónia", iso: "lv", regiao: "Central e Bálticos" }, { nome: "Lituânia", iso: "lt", regiao: "Central e Bálticos" },
+            { nome: "Roménia", iso: "ro", regiao: "Balcãs" }, { nome: "Bulgária", iso: "bg", regiao: "Balcãs" },
+            { nome: "Croácia", iso: "hr", regiao: "Balcãs" }, { nome: "Sérvia", iso: "rs", regiao: "Balcãs" },
+            { nome: "Bósnia e Herzegovina", iso: "ba", regiao: "Balcãs" }, { nome: "Montenegro", iso: "me", regiao: "Balcãs" },
+            { nome: "Albânia", iso: "al", regiao: "Balcãs" }, { nome: "Macedónia do Norte", iso: "mk", regiao: "Balcãs" },
+            { nome: "Kosovo", iso: "xk", regiao: "Balcãs" },
+            { nome: "Ucrânia", iso: "ua", regiao: "Leste e Cáucaso" }, { nome: "Moldávia", iso: "md", regiao: "Leste e Cáucaso" },
+            { nome: "Turquia", iso: "tr", regiao: "Leste e Cáucaso" }, { nome: "Geórgia", iso: "ge", regiao: "Leste e Cáucaso" },
+            { nome: "Arménia", iso: "am", regiao: "Leste e Cáucaso" }, { nome: "Azerbaijão", iso: "az", regiao: "Leste e Cáucaso" },
+            { nome: "Rússia", iso: "ru", regiao: "Leste e Cáucaso" }
+        ];
+
+        const REGIOES = ["Todas", "Ocidental", "Sul", "Nórdicos", "Central e Bálticos", "Balcãs", "Leste e Cáucaso"];
+
+        // Os 3 grupos de dificuldade de entrada
+        const GRUPOS = {
+            dificil:  { nome: "Difícil",  plural: "difíceis",  desc: "Médias muito altas, testes de admissão ou entrevistas e poucas vagas." },
+            moderado: { nome: "Moderado", plural: "moderadas", desc: "Média boa e requisitos de língua, sem processos muito seletivos." },
+            facil:    { nome: "Fácil",    plural: "fáceis",    desc: "Acesso aberto ou só com o secundário concluído e a língua exigida." }
+        };
+
+        // Estado da aplicação
+        let regiaoAtiva = "Todas";
+        let paisAtual = null;
+        let uniAtual = null;
+        let passoAtual = 1;
+
+        /* =========================================================
+           FUNÇÕES AUXILIARES
+           ========================================================= */
+        const bandeira = iso => `https://flagcdn.com/w160/${iso}.png`;
+        const unisDe = nomePais => baseDadosUniversidades[nomePais] || [];
+        const temIngles = uni => uni.cursos.some(c => c.linguas.includes("EN"));
+        const contarGrupo = (unis, g) => unis.filter(u => u.grupo === g).length;
+
+        // Link para encontrar a página do curso no site da universidade
+        function linkCurso(uni, curso) {
+            const dominio = new URL(uni.link).hostname.replace(/^www\./, "");
+            return "https://www.google.com/search?q=" + encodeURIComponent(`site:${dominio} ${curso.nome}`);
+        }
+
+        function linkAdmissoes(uni) {
+            const dominio = new URL(uni.link).hostname.replace(/^www\./, "");
+            return "https://www.google.com/search?q=" + encodeURIComponent(`site:${dominio} international students bachelor admission`);
+        }
+
+        function mostrarToast(texto) {
+            const t = document.getElementById("toast");
+            t.textContent = texto;
+            t.classList.add("mostrar");
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove("mostrar"), 3200);
+        }
+
+        /* =========================================================
+           NAVEGAÇÃO ENTRE PASSOS
+           ========================================================= */
+        function irPara(passo) {
+            if (passo === 2 && !paisAtual) return;
+            if (passo === 3 && !uniAtual) return;
+            passoAtual = passo;
+
+            document.getElementById("vista-paises").classList.toggle("escondido", passo !== 1);
+            document.getElementById("vista-unis").classList.toggle("escondido", passo !== 2);
+            document.getElementById("vista-uni").classList.toggle("escondido", passo !== 3);
+
+            [1, 2, 3].forEach(n => {
+                const el = document.getElementById("step-" + n);
+                el.classList.toggle("ativo", n === passo);
+                el.classList.toggle("feito", n < passo);
+            });
+
+            document.querySelector("#step-2").lastChild.textContent = paisAtual && passo >= 2 ? paisAtual : "Universidade";
+            document.getElementById("hero").classList.toggle("compacto", passo > 1);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        /* =========================================================
+           PASSO 1 — PAÍSES
+           ========================================================= */
+        function criarChipsRegioes() {
+            const caixa = document.getElementById("chips-regioes");
+            caixa.innerHTML = "";
+            REGIOES.forEach(r => {
+                const b = document.createElement("button");
+                b.className = "chip" + (r === regiaoAtiva ? " ativo" : "");
+                b.textContent = r;
+                b.onclick = () => { regiaoAtiva = r; criarChipsRegioes(); mostrarPaises(); };
+                caixa.appendChild(b);
+            });
+        }
+
+        function mostrarPaises() {
+            const termo = document.getElementById("pesquisa-pais").value.toLowerCase().trim();
+            const grid = document.getElementById("grid-paises");
+            grid.innerHTML = "";
+
+            const lista = paisesEuropa.filter(p =>
+                p.nome.toLowerCase().includes(termo) &&
+                (regiaoAtiva === "Todas" || p.regiao === regiaoAtiva)
+            );
+
+            if (lista.length === 0) {
+                grid.innerHTML = `<div class="vazio">Nenhum país encontrado com "${termo}".</div>`;
+                return;
+            }
+
+            lista.forEach((p, i) => {
+                const unis = unisDe(p.nome);
+                const contagens = Object.keys(GRUPOS)
+                    .filter(g => contarGrupo(unis, g) > 0)
+                    .map(g => `<i class="${g}">${contarGrupo(unis, g)} ${GRUPOS[g].nome.toLowerCase()}</i>`).join("");
+                const card = document.createElement("button");
+                card.className = "pais" + (p.ref ? " ref" : "");
+                card.style.animationDelay = (i * 0.02) + "s";
+                card.innerHTML = `
+                    <img src="${bandeira(p.iso)}" alt="Bandeira de ${p.nome}" loading="lazy">
+                    <div>
+                        <h3>${p.nome}</h3>
+                        <small>${p.ref ? "País de referência" : unis.length + (unis.length === 1 ? " universidade" : " universidades")}</small>
+                        ${p.ref ? "" : `<div class="contagens">${contagens}</div>`}
+                    </div>`;
+                card.onclick = () => p.ref
+                    ? mostrarToast("🇵🇹 Portugal é o país de referência — usa a App 2 (Médias & Universidades)!")
+                    : abrirPais(p.nome);
+                grid.appendChild(card);
+            });
+        }
+
+        /* =========================================================
+           PASSO 2 — UNIVERSIDADES DO PAÍS (por dificuldade)
+           ========================================================= */
+        function abrirPais(nome) {
+            paisAtual = nome;
+            const p = paisesEuropa.find(x => x.nome === nome);
+            const unis = unisDe(nome);
+
+            document.getElementById("bp-bandeira").src = bandeira(p.iso);
+            document.getElementById("bp-nome").textContent = nome;
+            Object.keys(GRUPOS).forEach(g => document.getElementById("bp-" + g).textContent = contarGrupo(unis, g));
+
+            const areas = [...new Set(unis.flatMap(u => u.areas))].sort();
+            document.getElementById("filtro-area").innerHTML =
+                `<option value="">Todas as áreas</option>` + areas.map(a => `<option>${a}</option>`).join("");
+
+            document.getElementById("pesquisa-uni").value = "";
+            document.getElementById("filtro-grupo").value = "";
+            document.getElementById("so-ingles").checked = false;
+
+            mostrarUnis();
+            irPara(2);
+        }
+
+        function criarCartaoUni(uni, i) {
+            const nIngles = uni.cursos.filter(c => c.linguas.includes("EN")).length;
+            const card = document.createElement("button");
+            card.className = "uni";
+            card.style.animationDelay = Math.min(i * 0.04, 0.5) + "s";
+            card.innerHTML = `
+                <div class="uni-foto">
+                    <img src="${uni.foto || imagemReserva(uni.nome)}" data-wiki="${uni.wiki}" alt="${uni.nome}" loading="lazy" onerror="this.src=imagemReserva(this.alt)">
+                </div>
+                <div class="uni-corpo">
+                    <h3>${uni.nome}</h3>
+                    <span class="local">📍 ${uni.cidade}</span>
+                    <span class="nivel ${uni.grupo}">${GRUPOS[uni.grupo].nome}</span>
+                    <div class="uni-rodape">
+                        <span>${uni.cursos.length} curso${uni.cursos.length !== 1 ? "s" : ""}${nIngles ? ` · ${nIngles} em inglês` : ""}</span>
+                        <span class="ver">Ver cursos <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+                    </div>
+                </div>`;
+            card.onclick = () => abrirUniversidade(uni);
+            return card;
+        }
+
+        function mostrarUnis() {
+            const termo = document.getElementById("pesquisa-uni").value.toLowerCase().trim();
+            const area = document.getElementById("filtro-area").value;
+            const grupoFiltro = document.getElementById("filtro-grupo").value;
+            const soIngles = document.getElementById("so-ingles").checked;
+            const caixa = document.getElementById("grupos-unis");
+
+            // Dentro de cada grupo, as mais exigentes aparecem primeiro
+            const lista = unisDe(paisAtual)
+                .filter(u =>
+                    (u.nome.toLowerCase().includes(termo) || u.cidade.toLowerCase().includes(termo)) &&
+                    (!area || u.areas.includes(area)) &&
+                    (!grupoFiltro || u.grupo === grupoFiltro) &&
+                    (!soIngles || temIngles(u)))
+                .sort((a, b) => a.nivel - b.nivel || a.nome.localeCompare(b.nome));
+
+            caixa.innerHTML = "";
+            if (lista.length === 0) {
+                caixa.innerHTML = `<div class="vazio">Nenhuma universidade corresponde aos filtros escolhidos.</div>`;
+                return;
+            }
+
+            Object.entries(GRUPOS).forEach(([chave, g]) => {
+                const doGrupo = lista.filter(u => u.grupo === chave);
+                if (doGrupo.length === 0) return;
+
+                const secao = document.createElement("section");
+                secao.className = "grupo " + chave;
+                secao.innerHTML = `
+                    <div class="grupo-cab">
+                        <span class="bola"></span>
+                        <div><h3>${g.nome}</h3><p>${g.desc}</p></div>
+                        <span class="conta">${doGrupo.length} universidade${doGrupo.length !== 1 ? "s" : ""}</span>
+                    </div>
+                    <div class="grid-unis"></div>`;
+                const grid = secao.querySelector(".grid-unis");
+                doGrupo.forEach((uni, i) => grid.appendChild(criarCartaoUni(uni, i)));
+                caixa.appendChild(secao);
+            });
+
+            carregarImagens(lista);
+        }
+
+        /* =========================================================
+           PASSO 3 — UNIVERSIDADE E CURSOS
+           ========================================================= */
+        function abrirUniversidade(uni) {
+            uniAtual = uni;
+            const g = GRUPOS[uni.grupo];
+
+            const foto = document.getElementById("det-foto");
+            foto.src = uni.foto || fotosEncontradas[uni.wiki] || imagemReserva(uni.nome);
+            foto.alt = uni.nome;
+            foto.dataset.wiki = uni.wiki;
+
+            const etiqueta = document.getElementById("det-grupo");
+            etiqueta.className = "nivel " + uni.grupo;
+            etiqueta.textContent = "Entrada " + g.nome.toLowerCase();
+            document.getElementById("det-nome").textContent = uni.nome;
+            document.getElementById("det-local").textContent = `📍 ${uni.cidade}, ${paisAtual}`;
+
+            const nivel = document.getElementById("det-nivel");
+            nivel.className = "nivel " + uni.grupo;
+            nivel.textContent = g.nome;
+            document.getElementById("det-req").textContent = uni.req;
+            document.getElementById("det-desc").textContent = uni.desc;
+            document.getElementById("det-site").href = uni.link;
+            document.getElementById("det-admissoes").href = linkAdmissoes(uni);
+
+            const nIngles = uni.cursos.filter(c => c.linguas.includes("EN")).length;
+            document.getElementById("det-sub").textContent =
+                `${uni.cursos.length} licenciatura${uni.cursos.length !== 1 ? "s" : ""} na área socioeconómica abertas a candidatos internacionais` +
+                (nIngles ? ` · ${nIngles} com ensino em inglês` : " · ensino na língua local");
+
+            const lista = document.getElementById("lista-cursos");
+            lista.innerHTML = "";
+            uni.cursos.forEach((curso, i) => {
+                const linguas = curso.linguas.map(l =>
+                    `<span class="lingua ${l === "EN" ? "en" : ""}">${LINGUAS[l] || l}</span>`).join("");
+                const item = document.createElement("div");
+                item.className = "curso";
+                item.style.animationDelay = (i * 0.05) + "s";
+                item.innerHTML = `
+                    <div class="curso-icone">${i + 1}</div>
+                    <div class="curso-info">
+                        <h4>${curso.nome}</h4>
+                        <div class="linguas">${linguas}</div>
+                    </div>
+                    <a class="btn-curso" href="${linkCurso(uni, curso)}" target="_blank" rel="noopener noreferrer">Ver curso ↗</a>`;
+                lista.appendChild(item);
+            });
+
+            carregarImagens([uni]);
+            irPara(3);
+        }
+
+        /* =========================================================
+           FOTOGRAFIAS DAS UNIVERSIDADES (ver fotos.js)
+           ========================================================= */
+        const fotosEncontradas = {};
+
+        function aplicarImagem(wiki, url) {
+            document.querySelectorAll("img[data-wiki]").forEach(img => {
+                if (img.dataset.wiki === wiki && url) img.src = url;
+            });
+        }
+
+        function carregarImagens(listaUnis) {
+            listaUnis.forEach(uni => {
+                if (uni.foto) return;                                   // tem foto própria (LSE)
+                obterFoto(uni.wiki).then(url => {
+                    if (!url) return;
+                    fotosEncontradas[uni.wiki] = url;
+                    aplicarImagem(uni.wiki, url);
+                });
+            });
+        }
+
+        /* =========================================================
+           ARRANQUE
+           ========================================================= */
+        function animarNumero(id, alvo) {
+            const el = document.getElementById(id);
+            const inicio = performance.now();
+            function frame(t) {
+                const p = Math.min((t - inicio) / 900, 1);
+                el.textContent = Math.round(alvo * (1 - Math.pow(1 - p, 3)));
+                if (p < 1) requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        }
+
+        window.onload = () => {
+            const todas = Object.values(baseDadosUniversidades).flat();
+            animarNumero("st-paises", Object.keys(baseDadosUniversidades).length);
+            animarNumero("st-unis", todas.length);
+            animarNumero("st-cursos", todas.reduce((s, u) => s + u.cursos.length, 0));
+            criarChipsRegioes();
+            mostrarPaises();
+
+            // Abre logo um país se vier da página inicial (ex: europa.html?pais=Espanha)
+            const paisPedido = new URLSearchParams(window.location.search).get("pais");
+            if (paisPedido && baseDadosUniversidades[paisPedido]) abrirPais(paisPedido);
+        };
+    </script>
+</body>
+</html>
