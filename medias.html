@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Médias & Universidades — Rumo Socioeconómico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Estilos.css">
+    <style>
+        .sim-layout { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+
+        .sim-form { position: sticky; top: 96px; }
+        .sim-form h3 { font-size: 19px; font-weight: 900; color: var(--preto); margin-bottom: 4px; }
+        .sim-form .sub { font-size: 14px; color: var(--cinza); margin-bottom: 20px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+        label { font-weight: 800; color: var(--preto); font-size: 14px; }
+
+        input[type="number"], select {
+            padding: 13px 15px; border-radius: 12px;
+            border: 1px solid var(--cinza-claro); background: var(--branco);
+            color: #1e293b; font-size: 16px; font-family: inherit; font-weight: 600;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        input[type="number"]:focus, select:focus { outline: none; border-color: var(--preto); box-shadow: 0 0 0 4px rgba(0,0,0,.06); }
+        .erro { color: #dc2626; font-size: 13px; font-weight: 700; min-height: 18px; }
+
+        .btn-simulate {
+            width: 100%; background: var(--preto); color: #fff; border: none;
+            padding: 15px; font-size: 16px; font-weight: 800; border-radius: 12px;
+            cursor: pointer; font-family: inherit; transition: background .2s, transform .2s;
+            box-shadow: var(--sombra-md);
+        }
+        .btn-simulate:hover { background: var(--cinza-escuro); transform: translateY(-2px); }
+
+        .legenda { display: flex; gap: 16px; margin-top: 18px; font-size: 12.5px; color: var(--cinza); font-weight: 600; }
+        .legenda i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+        /* Estado inicial (antes de simular) */
+        .vazio-inicial {
+            text-align: center; padding: 70px 30px; color: var(--cinza);
+            background: var(--branco); border: 1px dashed var(--cinza-claro); border-radius: 20px;
+        }
+        .vazio-inicial b { display: block; font-size: 42px; margin-bottom: 8px; }
+
+        /* Resultados */
+        .results-section { display: none; animation: entrar .4s ease both; }
+        .results-title { font-size: 22px; font-weight: 900; color: var(--preto); margin-bottom: 6px; }
+        #resumo { color: var(--cinza-escuro); font-size: 15px; margin-bottom: 18px; }
+        #resumo b { color: var(--preto); }
+
+        .uni-card {
+            background: var(--branco); border: 1px solid var(--cinza-claro);
+            border-left: 5px solid var(--cinza-claro);
+            border-radius: 16px; padding: 20px 22px; margin-bottom: 14px;
+            display: flex; justify-content: space-between; align-items: center; gap: 20px;
+            box-shadow: var(--sombra-sm); transition: transform .2s, box-shadow .2s;
+            animation: entrar .4s ease both;
+        }
+        .uni-card:hover { transform: translateY(-3px); box-shadow: var(--sombra-md); }
+        .uni-card.ok { border-left-color: #16a34a; }
+        .uni-card.nao { border-left-color: #dc2626; }
+
+        .uni-info { flex: 1; min-width: 0; }
+        .uni-pop { font-size: 11.5px; font-weight: 800; color: var(--cinza); text-transform: uppercase; letter-spacing: .6px; }
+        .uni-info h3 { font-size: 17px; font-weight: 800; color: var(--preto); margin: 2px 0 4px; line-height: 1.3; }
+        .uni-meta { font-size: 14px; color: var(--cinza); }
+        .uni-meta span { font-weight: 800; color: var(--preto); }
+
+        .uni-notas { font-size: 12.5px; color: var(--cinza); margin-top: 4px; }
+        .uni-notas b { color: var(--cinza-escuro); }
+
+        .escala { position: relative; height: 6px; border-radius: 999px; background: var(--fundo); margin-top: 14px; max-width: 420px; }
+        .escala i { position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid #fff; box-shadow: var(--sombra-sm); }
+        .escala .ref { background: var(--cinza-escuro); }
+        .escala .aluno { background: #2563eb; }
+
+        .uni-status { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .badge-pos, .badge-neg { padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 800; white-space: nowrap; }
+        .badge-pos { background: #dcfce7; color: #166534; }
+        .badge-neg { background: #fee2e2; color: #991b1b; }
+
+        .btn-uni-link {
+            background: var(--preto); color: #fff; text-decoration: none;
+            padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            white-space: nowrap; transition: background .2s;
+        }
+        .btn-uni-link:hover { background: var(--cinza-escuro); }
+
+        .no-results { text-align: center; padding: 30px; color: var(--cinza); font-style: italic; }
+
+        @media (max-width: 920px) {
+            .sim-layout { grid-template-columns: 1fr; }
+            .sim-form { position: static; }
+            .uni-card { flex-direction: column; align-items: flex-start; }
+            .uni-status { align-items: flex-start; flex-direction: row; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de Navegação Superior -->
+    <nav class="navbar">
+        <a href="HTMLProjeto.html" class="navbar-brand">Rumo<span>Socioeconómico</span></a>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-btn" aria-label="Abrir menu">☰</label>
+        <ul class="nav-links">
+            <li><a href="HTMLProjeto.html">Home</a></li>
+            <li><a href="questionario.html">1. Descobrir Curso</a></li>
+            <li><a href="medias.html" class="active">2. Médias & Universidades</a></li>
+            <li><a href="europa.html">3. Estudar na Europa</a></li>
+        </ul>
+    </nav>
+
+    <main class="contentor">
+        <header class="page-hero">
+            <span class="eyebrow">📊 Aplicação 2 · Simulador</span>
+            <h1>Simulador de Médias e Universidades</h1>
+            <p>Introduz a tua média esperada, escolhe o curso pretendido e descobre em que universidades portuguesas podes entrar, com base na nota do último colocado nos últimos 5 anos (dados oficiais da DGES).</p>
+        </header>
+
+        <div class="sim-layout">
+            <!-- Formulário -->
+            <div class="cartao sim-form">
+                <h3>A tua candidatura</h3>
+                <p class="sub">Preenche os dois campos e carrega em simular.</p>
+
+                <div class="form-group">
+                    <label for="input-media">A tua média esperada (10 a 20 valores)</label>
+                    <input type="number" id="input-media" step="0.1" min="10" max="20" value="15.5" placeholder="Ex: 16.2">
+                    <span class="erro" id="erro-media"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="select-curso">Curso pretendido</label>
+                    <select id="select-curso">
+                        <option value="Gestão">Gestão</option>
+                        <option value="Economia">Economia</option>
+                        <option value="Finanças">Finanças</option>
+                        <option value="Direito">Direito</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Contabilidade e Finanças">Contabilidade e Finanças</option>
+                        <option value="MAEG">Matemática Aplicada à Economia e Gestão (MAEG)</option>
+                        <option value="Relações Internacionais">Relações Internacionais</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-simulate" onclick="simularUniversidades()">Simular candidatura →</button>
+
+                <div class="legenda">
+                    <span><i style="background:#2563eb"></i>A tua média</span>
+                    <span><i style="background:#3f3f46"></i>Média de referência</span>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div>
+                <div class="vazio-inicial" id="vazio-inicial">
+                    <b>🎯</b>
+                    Os resultados aparecem aqui depois de simulares a tua candidatura.
+                </div>
+                <div id="results-section" class="results-section">
+                    <div class="results-title">Universidades disponíveis</div>
+                    <p id="resumo"></p>
+                    <p class="fonte" style="margin: -8px 0 14px;">Fonte: DGES — nota de candidatura do último colocado pelo contingente geral, 1.ª fase (2021–2025). As notas variam de ano para ano: usa-as como referência.</p>
+                    <div id="uni-list">
+                        <!-- Os resultados são injetados aqui via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="rodape">
+        <div class="contentor">
+            <div class="rodape-grid">
+                <div>
+                    <a href="HTMLProjeto.html" class="navbar-brand">Rumo<span>Socioeconómico</span></a>
+                    <p>Projeto de Oficina de Multimédia — 12.º B, CRSI. Ferramentas para ajudar alunos do secundário a escolher o seu caminho no ensino superior.</p>
+                </div>
+                <div>
+                    <h4>Aplicações</h4>
+                    <ul>
+                        <li><a href="questionario.html">Descobrir Curso</a></li>
+                        <li><a href="medias.html">Médias & Universidades</a></li>
+                        <li><a href="europa.html">Estudar na Europa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Links úteis</h4>
+                    <ul>
+                        <li><a href="https://www.dges.gov.pt/" target="_blank" rel="noopener">DGES — Acesso ao Ensino Superior</a></li>
+                        <li><a href="https://erasmus-plus.ec.europa.eu/" target="_blank" rel="noopener">Erasmus+</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="rodape-base">
+                <span>© 2026 Rumo Socioeconómico · Nuno Lin</span>
+                <span>Dados de referência — confirma sempre nos sites oficiais.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Nota de candidatura do último colocado (contingente geral, 1.ª fase), na escala 0-20.
+        // Fonte: DGES — 2021 e 2022: estatísticas por curso; 2023 a 2025: guias de acesso (dges.gov.pt).
+        // "notas" = valores de 2021, 2022, 2023, 2024 e 2025; "mediaUltimos5Anos" = média desses 5 anos.
+        const baseDadosUniversidades = {
+            "Gestão": [
+                { nome: "Faculdade de Economia do Porto (FEP)", curso: "Gestão", notas: [17.58, 18.05, 17.9, 18.35, 17.8], mediaUltimos5Anos: 17.9, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9147&code=1116" },
+                { nome: "Nova School of Business and Economics (Nova SBE)", curso: "Gestão", notas: [17.25, 17.9, 17.85, 18.3, 17.76], mediaUltimos5Anos: 17.8, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9147&code=0904" },
+                { nome: "ISCTE – Instituto Universitário de Lisboa", curso: "Gestão", notas: [17.0, 17.2, 16.55, 17.15, 16.45], mediaUltimos5Anos: 16.9, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9147&code=6800" },
+                { nome: "ISEG – Lisbon School of Economics & Management", curso: "Gestão", notas: [16.13, 16.68, 16.65, 17.3, 16.71], mediaUltimos5Anos: 16.7, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9147&code=1517" },
+                { nome: "Faculdade de Economia da Universidade de Coimbra (FEUC)", curso: "Gestão", notas: [16.0, 16.6, 16.33, 17.0, 16.15], mediaUltimos5Anos: 16.4, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9147&code=0503" }
+            ],
+            "Economia": [
+                { nome: "Nova School of Business and Economics (Nova SBE)", curso: "Economia", notas: [16.85, 17.65, 17.35, 18.0, 17.46], mediaUltimos5Anos: 17.5, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9081&code=0904" },
+                { nome: "Faculdade de Economia do Porto (FEP)", curso: "Economia", notas: [16.95, 17.4, 17.3, 17.83, 17.23], mediaUltimos5Anos: 17.3, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9081&code=1116" },
+                { nome: "Universidade do Minho", curso: "Economia", notas: [16.56, 16.86, 16.76, 17.22, 16.45], mediaUltimos5Anos: 16.8, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9081&code=1000" },
+                { nome: "ISEG – Lisbon School of Economics & Management", curso: "Economia", notas: [15.7, 16.4, 16.2, 16.8, 16.19], mediaUltimos5Anos: 16.3, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9081&code=1517" },
+                { nome: "Faculdade de Economia da Universidade de Coimbra (FEUC)", curso: "Economia", notas: [14.25, 15.1, 15.33, 15.9, 15.23], mediaUltimos5Anos: 15.2, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9081&code=0503" }
+            ],
+            "Finanças": [
+                { nome: "ISEG – Lisbon School of Economics & Management", curso: "Finanças (ensino em inglês)", notas: [15.25, 16.23, 16.18, 16.6, 16.29], mediaUltimos5Anos: 16.1, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=A013&code=1517" },
+                { nome: "ISCTE – Instituto Universitário de Lisboa", curso: "Finanças e Contabilidade", notas: [15.58, 16.15, 15.8, 16.3, 15.73], mediaUltimos5Anos: 15.9, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=8029&code=6800" },
+                { nome: "ISCA – Universidade de Aveiro", curso: "Finanças", notas: [15.81, 15.7, 15.8, 16.36, 15.78], mediaUltimos5Anos: 15.9, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9140&code=3011" },
+                { nome: "ISCAL – Politécnico de Lisboa", curso: "Finanças Empresariais", notas: [15.79, 15.99, 16.11, 15.96, 15.35], mediaUltimos5Anos: 15.8, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9476&code=3117" }
+            ],
+            "Direito": [
+                { nome: "Faculdade de Direito da Universidade do Porto (FDUP)", curso: "Direito", notas: [17.72, 17.68, 18.14, 18.22, 17.78], mediaUltimos5Anos: 17.9, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9078&code=1114" },
+                { nome: "Faculdade de Direito da Universidade Nova de Lisboa (NOVA)", curso: "Direito", notas: [17.44, 17.6, 17.36, 17.48, 17.8], mediaUltimos5Anos: 17.5, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9078&code=0911" },
+                { nome: "Faculdade de Direito da Universidade de Coimbra (FDUC)", curso: "Direito", notas: [16.85, 16.8, 17.0, 17.05, 16.5], mediaUltimos5Anos: 16.8, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9078&code=0502" },
+                { nome: "Faculdade de Direito da Universidade de Lisboa (FDUL)", curso: "Direito", notas: [16.25, 16.0, 15.98, 15.95, 16.33], mediaUltimos5Anos: 16.1, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9078&code=1504" }
+            ],
+            "Marketing": [
+                { nome: "Universidade do Minho", curso: "Marketing", notas: [16.84, 16.94, 17.22, 17.3, 16.0], mediaUltimos5Anos: 16.9, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9205&code=1000" },
+                { nome: "ISCTE – Instituto Universitário de Lisboa", curso: "Gestão de Marketing", notas: [16.13, 16.68, 16.2, 16.6, 16.05], mediaUltimos5Anos: 16.3, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9156&code=6800" },
+                { nome: "ISCAP – Politécnico do Porto", curso: "Marketing", notas: [16.54, 16.61, 16.8, 16.44, 14.6], mediaUltimos5Anos: 16.2, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9205&code=3134" },
+                { nome: "ISCA – Universidade de Aveiro", curso: "Marketing", notas: [16.05, 15.76, 16.37, 15.88, 14.08], mediaUltimos5Anos: 15.6, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9205&code=3011" }
+            ],
+            "Contabilidade e Finanças": [
+                { nome: "ISCAP – Politécnico do Porto", curso: "Contabilidade e Administração", notas: [14.63, 15.61, 14.53, 15.21, 10.65], mediaUltimos5Anos: 14.1, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9058&code=3134" },
+                { nome: "ESCE – Politécnico de Setúbal", curso: "Contabilidade e Finanças", notas: [14.15, 14.41, 14.66, 14.15, 12.55], mediaUltimos5Anos: 14.0, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9627&code=3153" },
+                { nome: "ESTG – Politécnico de Leiria", curso: "Contabilidade e Finanças", notas: [13.0, 13.29, 12.9, 13.5, 11.38], mediaUltimos5Anos: 12.8, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9627&code=3102" }
+            ],
+            "MAEG": [
+                { nome: "ISEG – Lisbon School of Economics & Management", curso: "Matemática Aplicada à Economia e à Gestão", notas: [18.15, 18.25, 18.2, 18.9, 18.51], mediaUltimos5Anos: 18.4, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9210&code=1517" },
+                { nome: "Universidade de Évora", curso: "Matemática Aplicada à Economia e à Gestão", notas: [12.23, 12.75, 12.79, 12.34, 11.75], mediaUltimos5Anos: 12.4, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9210&code=0602" },
+                { nome: "Universidade do Algarve", curso: "Matemática Aplicada à Economia e à Gestão", notas: [11.84, 11.96, 12.25, 11.58, 13.08], mediaUltimos5Anos: 12.1, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9210&code=0203" }
+            ],
+            "Relações Internacionais": [
+                { nome: "Faculdade de Economia da Universidade de Coimbra (FEUC)", curso: "Relações Internacionais", notas: [17.45, 16.95, 17.05, 17.5, 16.75], mediaUltimos5Anos: 17.1, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9229&code=0503" },
+                { nome: "ISCSP – Universidade de Lisboa", curso: "Relações Internacionais", notas: [17.4, 16.45, 16.8, 16.8, 16.08], mediaUltimos5Anos: 16.7, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9229&code=1516" },
+                { nome: "Universidade do Minho", curso: "Relações Internacionais", notas: [16.84, 16.64, 16.22, 16.8, 14.2], mediaUltimos5Anos: 16.1, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9229&code=1000" },
+                { nome: "Universidade de Évora", curso: "Relações Internacionais", notas: [15.34, 15.4, 15.3, 15.28, 14.95], mediaUltimos5Anos: 15.3, link: "https://www.dges.gov.pt/guias/detcursopi.asp?codc=9229&code=0604" }
+            ]
+        };
+
+        function simularUniversidades() {
+            const mediaAluno = parseFloat(document.getElementById("input-media").value);
+            const cursoSelecionado = document.getElementById("select-curso").value;
+            const listaDiv = document.getElementById("uni-list");
+            const resultadosSec = document.getElementById("results-section");
+
+            if (isNaN(mediaAluno) || mediaAluno < 10 || mediaAluno > 20) {
+                document.getElementById("erro-media").textContent = "Introduz uma média válida entre 10 e 20 valores.";
+                document.getElementById("input-media").focus();
+                return;
+            }
+            document.getElementById("erro-media").textContent = "";
+
+            const universidades = baseDadosUniversidades[cursoSelecionado] || [];
+            
+            // Ordenar da média mais alta para a mais baixa
+            universidades.sort((a, b) => b.mediaUltimos5Anos - a.mediaUltimos5Anos);
+
+            resultadosSec.style.display = "block";
+            document.getElementById("vazio-inicial").style.display = "none";
+            listaDiv.innerHTML = "";
+
+            if (universidades.length === 0) {
+                listaDiv.innerHTML = `<div class="no-results">De momento não existem dados para este curso.</div>`;
+                return;
+            }
+
+            // Resumo: em quantas universidades a média chega
+            const conseguidas = universidades.filter(u => mediaAluno >= u.mediaUltimos5Anos).length;
+            document.getElementById("resumo").innerHTML =
+                `<b>${conseguidas} de ${universidades.length}</b> universidades em ${cursoSelecionado} têm média de referência igual ou inferior a <b>${mediaAluno.toFixed(1)}</b>.`;
+
+            universidades.forEach(uni => {
+                const entra = mediaAluno >= uni.mediaUltimos5Anos;
+                const statusBadge = entra 
+                    ? `<span class="badge-pos">Média Suficiente ✓</span>` 
+                    : `<span class="badge-neg">Abaixo da Média ✕</span>`;
+
+                const card = document.createElement("div");
+                // Barra que compara a média do aluno com a média de referência (escala 10–20)
+                const posRef = ((uni.mediaUltimos5Anos - 10) / 10) * 100;
+                const posAluno = ((mediaAluno - 10) / 10) * 100;
+                card.className = "uni-card " + (entra ? "ok" : "nao");
+                card.innerHTML = `
+                    <div class="uni-info">
+                        <span class="uni-pop">${uni.curso}</span>
+                        <h3>${uni.nome}</h3>
+                        <div class="uni-meta">Média do último colocado (2021–2025): <span>${uni.mediaUltimos5Anos.toFixed(1)}</span></div>
+                        <div class="uni-notas">${uni.notas.map((n, i) => `${2021 + i}: <b>${n.toFixed(1).replace(".", ",")}</b>`).join(" · ")}</div>
+                        <div class="escala">
+                            <i class="ref" style="left:${posRef}%" title="Média de referência"></i>
+                            <i class="aluno" style="left:${posAluno}%" title="A tua média"></i>
+                        </div>
+                    </div>
+                    <div class="uni-status">
+                        ${statusBadge}
+                        <a href="${uni.link}" target="_blank" class="btn-uni-link">Ver na DGES →</a>
+                    </div>
+                `;
+                listaDiv.appendChild(card);
+            });
+
+            resultadosSec.scrollIntoView({ behavior: "smooth" });
+        }
+    </script>
+
+</body>
+</html>
